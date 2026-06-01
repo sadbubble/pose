@@ -1,0 +1,14 @@
+[project]
+name = "pose-api"
+version = "1.0.0"
+description = "POSE - Event invitation platform API for Almaty"
+requires-python = ">=3.11"
+dependencies = [
+    "fastapi[standard]>=0.115.0",
+    "uvicorn[standard]>=0.30.0",
+    "pydantic>=2.0.0",
+]
+
+[build-system]
+requires = ["setuptools"]
+build-backend = "setuptools.backends._legacy:_Backend"

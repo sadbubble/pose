@@ -1,0 +1,27 @@
+{
+  "name": "POSE — Приглашения на мероприятия",
+  "short_name": "POSE",
+  "description": "Создавайте яркие приглашения за минуту — для Алматы",
+  "start_url": "/",
+  "scope": "/",
+  "display": "standalone",
+  "theme_color": "#a855f7",
+  "background_color": "#faf5ff",
+  "orientation": "portrait-primary",
+  "lang": "ru",
+  "categories": ["social", "lifestyle"],
+  "icons": [
+    {
+      "src": "icon-192.png",
+      "sizes": "192x192",
+      "type": "image/png",
+      "purpose": "any maskable"
+    },
+    {
+      "src": "icon-512.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "any maskable"
+    }
+  ]
+}

@@ -1,0 +1,1562 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+<meta name="theme-color" content="#a855f7">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-title" content="POSE">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="application-name" content="POSE">
+<meta name="description" content="Создавайте яркие приглашения за минуту — дни рождения, свадьбы, вечеринки. Бесплатно, без регистрации. Алматы.">
+<meta property="og:type" content="website">
+<meta property="og:site_name" content="POSE">
+<meta property="og:title" content="POSE — Приглашения на мероприятия в Алматы">
+<meta property="og:description" content="Создавайте яркие приглашения за минуту. Бесплатно, без регистрации.">
+<meta property="og:image" content="icon-512.png">
+<meta property="og:url" content="">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" content="POSE — Приглашения на мероприятия">
+<meta name="twitter:description" content="Создавайте яркие приглашения за минуту. Бесплатно, без регистрации.">
+<meta name="twitter:image" content="icon-512.png">
+<link rel="manifest" href="manifest.json">
+<link rel="apple-touch-icon" href="icon-192.png">
+<link rel="icon" type="image/png" sizes="192x192" href="icon-192.png">
+<title>POSE — Приглашения на мероприятия в Алматы</title>
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&family=Inter:wght@300;400;500;600;700&family=Playfair+Display:wght@400;700&family=Caveat:wght@400;700&family=Unbounded:wght@400;700&family=Montserrat:wght@400;600;700&family=Pacifico&display=swap" rel="stylesheet">
+<script src="https://cdn.tailwindcss.com"></script>
+<script src="https://unpkg.com/lucide@latest"></script>
+<script src="https://cdn.jsdelivr.net/npm/qrcode-generator@1.4.4/qrcode.min.js"></script>
+<script src="config.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script src="backend.js"></script>
+<script>
+tailwind.config={theme:{extend:{colors:{
+  brand:{50:'#faf5ff',100:'#f3e8ff',200:'#e9d5ff',300:'#d8b4fe',400:'#c084fc',500:'#a855f7',600:'#9333ea',700:'#7e22ce',800:'#6b21a8'},
+  accent:{50:'#fff7ed',100:'#ffedd5',200:'#fed7aa',300:'#fdba74',400:'#fb923c',500:'#f97316'},
+  pink:{50:'#fdf2f8',100:'#fce7f3',200:'#fbcfe8',300:'#f9a8d4',400:'#f472b6',500:'#ec4899'},
+  teal:{400:'#2dd4bf',500:'#14b8a6'},
+  dark:{800:'#1e1b2e',900:'#13111c'}
+},fontFamily:{display:['Space Grotesk','system-ui','sans-serif'],sans:['Inter','system-ui','sans-serif']}}}}
+</script>
+<style>
+  html{scroll-behavior:smooth}
+  body{font-family:'Inter',sans-serif;color:#1e1b2e;background:#faf5ff}
+  .font-display{font-family:'Space Grotesk','system-ui',sans-serif}
+  ::-webkit-scrollbar{width:6px}::-webkit-scrollbar-track{background:#faf5ff}::-webkit-scrollbar-thumb{background:linear-gradient(180deg,#a855f7,#ec4899);border-radius:3px}
+
+  @keyframes fadeUp{from{opacity:0;transform:translateY(30px)}to{opacity:1;transform:translateY(0)}}
+  @keyframes fadeIn{from{opacity:0}to{opacity:1}}
+  @keyframes float{0%,100%{transform:translateY(0)}50%{transform:translateY(-15px)}}
+  @keyframes popIn{from{transform:scale(0.85);opacity:0}to{transform:scale(1);opacity:1}}
+  @keyframes gradient{0%{background-position:0% 50%}50%{background-position:100% 50%}100%{background-position:0% 50%}}
+  @keyframes wiggle{0%,100%{transform:rotate(-2deg)}50%{transform:rotate(2deg)}}
+  @keyframes confetti{0%{transform:translateY(0) rotate(0);opacity:1}100%{transform:translateY(-200px) rotate(720deg);opacity:0}}
+  @keyframes countPop{0%{transform:scale(1)}50%{transform:scale(1.2)}100%{transform:scale(1)}}
+  @keyframes slideIn{from{transform:translateX(20px);opacity:0}to{transform:translateX(0);opacity:1}}
+  @keyframes meshGradient{0%{background-position:0% 0%}25%{background-position:100% 0%}50%{background-position:100% 100%}75%{background-position:0% 100%}100%{background-position:0% 0%}}
+  @keyframes pulse-glow{0%,100%{box-shadow:0 0 20px rgba(168,85,247,.3)}50%{box-shadow:0 0 40px rgba(168,85,247,.6),0 0 80px rgba(236,72,153,.3)}}
+  @keyframes shimmer{0%{background-position:-200% 0}100%{background-position:200% 0}}
+  @keyframes blob{0%,100%{border-radius:60% 40% 30% 70%/60% 30% 70% 40%}50%{border-radius:30% 60% 70% 40%/50% 60% 30% 60%}}
+
+  .animate-fade-up{animation:fadeUp .7s ease-out forwards}
+  .animate-float{animation:float 4s ease-in-out infinite}
+  .animate-pop{animation:popIn .35s ease-out forwards}
+  .animate-gradient{background-size:200% 200%;animation:gradient 4s ease infinite}
+  .animate-wiggle{animation:wiggle 2s ease-in-out infinite}
+  .animate-slide-in{animation:slideIn .4s ease-out forwards}
+  .animate-count{animation:countPop .3s ease-out}
+  .animate-blob{animation:blob 8s ease-in-out infinite}
+  .animate-pulse-glow{animation:pulse-glow 3s ease-in-out infinite}
+
+  .reveal{opacity:0;transform:translateY(24px);transition:opacity .6s ease,transform .6s ease}
+  .reveal.visible{opacity:1;transform:translateY(0)}
+  .reveal-d1{transition-delay:.1s}.reveal-d2{transition-delay:.2s}.reveal-d3{transition-delay:.3s}
+
+  *:focus-visible{outline:3px solid #a855f7;outline-offset:2px;border-radius:4px}
+  .skip-link{position:absolute;top:-999px;left:50%;transform:translateX(-50%);z-index:9999;background:#7e22ce;color:#fff;padding:8px 24px;border-radius:0 0 12px 12px;font-weight:600;font-size:14px}
+  .skip-link:focus{top:0}
+
+  .webview-banner{position:fixed;top:0;left:0;right:0;z-index:9998;background:linear-gradient(135deg,#7e22ce,#a855f7);color:#fff;padding:10px 16px;font-size:13px;display:flex;align-items:center;justify-content:space-between;gap:8px;box-shadow:0 2px 12px rgba(0,0,0,.15)}
+  .webview-banner a{color:#fff;font-weight:700;text-decoration:underline}
+  .webview-banner button{background:none;border:none;color:#fff;font-size:20px;cursor:pointer;padding:4px;min-width:44px;min-height:44px;display:flex;align-items:center;justify-content:center}
+  .pwa-install-banner{position:fixed;bottom:20px;left:50%;transform:translateX(-50%);z-index:9998;background:#fff;border-radius:20px;box-shadow:0 8px 40px rgba(168,85,247,.25);padding:16px 20px;display:flex;align-items:center;gap:14px;max-width:360px;width:calc(100% - 32px);border:2px solid #e9d5ff}
+  .pwa-install-banner img{width:48px;height:48px;border-radius:12px}
+  .pwa-install-banner .pwa-info{flex:1}
+  .pwa-install-banner .pwa-info h4{font-weight:700;font-size:15px;margin:0 0 2px}
+  .pwa-install-banner .pwa-info p{font-size:12px;color:#6b7280;margin:0}
+  .pwa-install-banner .pwa-btn{background:linear-gradient(135deg,#a855f7,#ec4899);color:#fff;border:none;border-radius:12px;padding:10px 18px;font-weight:700;font-size:13px;cursor:pointer;white-space:nowrap;min-height:44px}
+  .pwa-install-banner .pwa-close{background:none;border:none;color:#9ca3af;font-size:18px;cursor:pointer;position:absolute;top:8px;right:12px;min-width:44px;min-height:44px;display:flex;align-items:center;justify-content:center}
+
+  @media(max-width:640px){
+    button,a,.rsvp-btn,.share-btn,.tab-btn,.lang-btn,[onclick]{min-height:44px}
+    input,textarea,select{min-height:44px;font-size:16px}
+  }
+
+  .btn-primary{background:linear-gradient(135deg,#a855f7,#ec4899,#f97316);background-size:200% 200%;animation:gradient 3s ease infinite;color:#fff;font-weight:700;border-radius:18px;transition:all .3s ease;box-shadow:0 4px 25px rgba(168,85,247,.35);letter-spacing:.01em}
+  .btn-primary:hover{transform:translateY(-3px) scale(1.02);box-shadow:0 10px 40px rgba(168,85,247,.5)}
+  .btn-secondary{border:2px solid #e9d5ff;color:#7e22ce;background:#fff;border-radius:16px;font-weight:600;transition:all .25s ease}
+  .btn-secondary:hover{background:#faf5ff;border-color:#c084fc;transform:translateY(-1px)}
+  .btn-danger{background:#fee2e2;color:#dc2626;font-weight:600;border-radius:16px;transition:all .25s ease;border:2px solid #fecaca}
+  .btn-danger:hover{background:#fecaca}
+
+  .glass{background:rgba(255,255,255,.1);backdrop-filter:blur(24px);-webkit-backdrop-filter:blur(24px);border:1px solid rgba(255,255,255,.18);box-shadow:0 8px 32px rgba(0,0,0,.1)}
+  .glass-card{background:rgba(255,255,255,.85);backdrop-filter:blur(20px);-webkit-backdrop-filter:blur(20px);border:1px solid rgba(255,255,255,.6);box-shadow:0 8px 32px rgba(168,85,247,.08)}
+  .card-hover{transition:all .35s ease}.card-hover:hover{transform:translateY(-8px);box-shadow:0 20px 60px rgba(168,85,247,.15)}
+
+  .gradient-text{background:linear-gradient(135deg,#a855f7 0%,#ec4899 40%,#f97316 100%);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text}
+  .gradient-text-lg{background:linear-gradient(135deg,#c084fc 0%,#f472b6 30%,#fb923c 60%,#a855f7 100%);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;background-size:200% auto;animation:shimmer 4s linear infinite}
+  .gradient-bg{background:linear-gradient(135deg,#0f0a1e 0%,#1a1040 25%,#2d1b69 50%,#4c1d95 75%,#2d1b69 100%);background-size:400% 400%;animation:meshGradient 15s ease infinite}
+  .gradient-mesh{background:linear-gradient(135deg,#667eea 0%,#764ba2 25%,#f093fb 50%,#4facfe 75%,#667eea 100%);background-size:400% 400%;animation:meshGradient 12s ease infinite}
+
+  .template-card{transition:all .4s cubic-bezier(.2,.8,.2,1);cursor:pointer;border-radius:20px;overflow:hidden}
+  .template-card:hover{transform:scale(1.06) rotate(-1deg);box-shadow:0 20px 50px rgba(168,85,247,.2)}
+
+  .rsvp-btn{transition:all .3s cubic-bezier(.2,.8,.2,1);cursor:pointer;border:2px solid transparent;border-radius:14px}
+  .rsvp-btn:hover{transform:scale(1.06);box-shadow:0 4px 20px rgba(0,0,0,.1)}
+  .rsvp-btn.selected{transform:scale(1.08);box-shadow:0 6px 24px rgba(0,0,0,.12)}
+
+  .feature-icon{transition:transform .3s ease}.feature-card:hover .feature-icon{transform:scale(1.1) rotate(-5deg)}
+
+  .lang-btn{transition:all .2s ease;border-radius:10px;padding:4px 10px;font-size:12px;font-weight:600;color:#6b21a8;background:#f3e8ff;border:1px solid #e9d5ff}
+  .lang-btn.active{background:#7e22ce;color:#fff;border-color:#7e22ce}
+
+  .event-type-chip{transition:all .25s ease;cursor:pointer;user-select:none;text-align:center;min-width:0;overflow:hidden}
+  .event-type-chip:hover{border-color:#c084fc;background:#faf5ff}
+  .event-type-chip.active{border-color:#a855f7;background:#f3e8ff;color:#7e22ce;box-shadow:0 0 0 3px rgba(168,85,247,.15)}
+
+  .demo-invite{border-radius:24px;overflow:hidden;box-shadow:0 20px 60px rgba(0,0,0,.15)}
+
+  .comment-item{animation:slideIn .3s ease-out forwards}
+
+  .reaction-btn{transition:all .2s ease;cursor:pointer}
+  .reaction-btn:hover{transform:scale(1.2)}
+  .reaction-btn.reacted{transform:scale(1.15);background:#f3e8ff}
+
+  .share-btn{transition:all .2s ease}.share-btn:hover{transform:translateY(-2px)}
+
+  .update-item{border-left:3px solid #c084fc;animation:slideIn .3s ease-out forwards}
+
+  .confetti-piece{position:fixed;pointer-events:none;animation:confetti 1.5s ease-out forwards;z-index:999}
+
+  input:focus,select:focus,textarea:focus{outline:0;border-color:#c084fc!important;box-shadow:0 0 0 3px rgba(168,85,247,.15)}
+
+  @media(max-width:640px){.hero-title{font-size:2.8rem!important}.create-section .grid{grid-template-columns:1fr!important}}
+
+  .view{display:none}.view.active{display:block}
+  .tab-btn{transition:all .2s ease}.tab-btn.active{color:#7e22ce;border-bottom:2px solid #a855f7}
+
+  .font-grotesk{font-family:'Space Grotesk',sans-serif}
+  .font-playfair{font-family:'Playfair Display',serif}
+  .font-caveat{font-family:'Caveat',cursive}
+  .font-unbounded{font-family:'Unbounded',sans-serif}
+  .font-montserrat{font-family:'Montserrat',sans-serif}
+  .font-pacifico{font-family:'Pacifico',cursive}
+
+  .poster-pick{transition:all .3s cubic-bezier(.2,.8,.2,1);cursor:pointer;border:3px solid transparent;border-radius:16px;overflow:hidden;aspect-ratio:16/10}
+  .poster-pick:hover{transform:scale(1.08);box-shadow:0 12px 32px rgba(0,0,0,.2)}
+  .poster-pick.active{border-color:#a855f7;box-shadow:0 0 0 3px rgba(168,85,247,.3),0 8px 24px rgba(168,85,247,.2)}
+
+  .font-pick{transition:all .3s cubic-bezier(.2,.8,.2,1);cursor:pointer;border:2px solid #e5e7eb;border-radius:14px;padding:10px 20px;background:#fff}
+  .font-pick:hover{border-color:#c084fc;transform:translateY(-2px);box-shadow:0 4px 16px rgba(168,85,247,.1)}
+  .font-pick.active{border-color:#a855f7;background:linear-gradient(135deg,#f3e8ff,#fce7f3);box-shadow:0 4px 16px rgba(168,85,247,.15)}
+
+  .countdown-box{display:flex;gap:16px;justify-content:center;flex-wrap:wrap}
+  .countdown-unit{text-align:center;min-width:80px;background:rgba(255,255,255,.15);backdrop-filter:blur(10px);border-radius:16px;padding:12px 8px}
+  .countdown-num{font-size:2.5rem;font-weight:800;line-height:1;color:#fff;text-shadow:0 2px 10px rgba(0,0,0,.2)}
+  .countdown-label{font-size:0.7rem;text-transform:uppercase;letter-spacing:1.5px;color:rgba(255,255,255,.7);margin-top:6px;font-weight:600}
+
+  .marquee{overflow:hidden;white-space:nowrap}
+  .marquee-inner{display:inline-block;animation:marqueeScroll 25s linear infinite}
+  @keyframes marqueeScroll{0%{transform:translateX(0)}100%{transform:translateX(-50%)}}
+
+  .poster-carousel{display:flex;gap:12px;overflow-x:auto;-webkit-overflow-scrolling:touch;scrollbar-width:auto;padding:8px 4px 14px}
+  .poster-carousel::-webkit-scrollbar{height:8px}
+  .poster-carousel::-webkit-scrollbar-track{background:#f3e8ff;border-radius:4px}
+  .poster-carousel::-webkit-scrollbar-thumb{background:#c084fc;border-radius:4px}
+  .poster-carousel::-webkit-scrollbar-thumb:hover{background:#a855f7}
+  .poster-carousel>div{flex-shrink:0}
+
+  .create-section{background:linear-gradient(180deg,#faf5ff 0%,#f3e8ff 30%,#e9d5ff 100%);position:relative}
+  .create-section::before{content:'';position:absolute;top:0;left:0;right:0;bottom:0;background:radial-gradient(circle at 20% 50%,rgba(168,85,247,.08) 0%,transparent 50%),radial-gradient(circle at 80% 30%,rgba(236,72,153,.06) 0%,transparent 50%);pointer-events:none}
+
+  .preview-card{transition:all .5s cubic-bezier(.2,.8,.2,1);border-radius:24px;overflow:hidden;box-shadow:0 25px 60px rgba(168,85,247,.2)}
+  .preview-card:hover{transform:perspective(800px) rotateY(-2deg) scale(1.02);box-shadow:0 30px 80px rgba(168,85,247,.25)}
+
+  .section-divider{height:2px;background:linear-gradient(90deg,transparent,#c084fc,#f472b6,#fb923c,transparent);opacity:.3}
+
+  .feature-card-v2{background:#fff;border-radius:20px;padding:28px;border:1px solid rgba(168,85,247,.08);transition:all .35s ease;position:relative;overflow:hidden}
+  .feature-card-v2::before{content:'';position:absolute;top:0;left:0;right:0;height:3px;background:linear-gradient(90deg,#a855f7,#ec4899);transform:scaleX(0);transition:transform .35s ease;transform-origin:left}
+  .feature-card-v2:hover{transform:translateY(-6px);box-shadow:0 20px 50px rgba(168,85,247,.12);border-color:rgba(168,85,247,.15)}
+  .feature-card-v2:hover::before{transform:scaleX(1)}
+
+  .event-info-card{background:rgba(255,255,255,.9);backdrop-filter:blur(16px);border:1px solid rgba(168,85,247,.08);border-radius:20px;transition:all .3s ease}
+  .event-info-card:hover{box-shadow:0 12px 32px rgba(168,85,247,.1);transform:translateY(-2px)}
+</style>
+</head>
+<body class="antialiased">
+<a href="#main-content" class="skip-link">Skip to content</a>
+
+<!-- NAV -->
+<nav id="navbar" class="fixed top-0 left-0 right-0 z-40 transition-all duration-300" role="navigation" aria-label="Main navigation">
+  <div class="max-w-7xl mx-auto px-5 lg:px-10">
+    <div class="flex items-center justify-between h-[64px]">
+      <a href="#" onclick="navigateTo('landing');return false;" class="flex items-center gap-2">
+        <div class="w-8 h-8 rounded-xl bg-gradient-to-br from-brand-500 to-pink-500 flex items-center justify-center">
+          <i data-lucide="party-popper" class="w-4 h-4 text-white"></i>
+        </div>
+        <span class="font-display text-xl font-bold tracking-tight">POSE</span>
+      </a>
+      <div class="hidden md:flex items-center gap-8" id="nav-links-landing">
+        <a href="#templates" class="text-[13px] font-medium text-gray-500 hover:text-brand-600 transition-colors" data-i18n="nav.templates">Шаблоны</a>
+        <a href="#features" class="text-[13px] font-medium text-gray-500 hover:text-brand-600 transition-colors" data-i18n="nav.features">Возможности</a>
+        <a href="#how" class="text-[13px] font-medium text-gray-500 hover:text-brand-600 transition-colors" data-i18n="nav.how">Как это работает</a>
+        <a href="#why-pose" class="text-[13px] font-medium text-gray-500 hover:text-brand-600 transition-colors" data-i18n="nav.why">Почему POSE</a>
+      </div>
+      <div class="hidden md:flex items-center gap-6" id="nav-links-event" style="display:none">
+        <a href="#" onclick="navigateTo('landing');return false;" class="text-[13px] font-medium text-gray-500 hover:text-brand-600 transition-colors flex items-center gap-1"><i data-lucide="arrow-left" class="w-3.5 h-3.5"></i> <span data-i18n="nav.back">На главную</span></a>
+      </div>
+      <div class="flex items-center gap-3">
+        <div class="hidden sm:flex items-center gap-1 mr-2">
+          <button onclick="setLang('ru')" class="lang-btn active" data-lang="ru">RU</button>
+          <button onclick="setLang('en')" class="lang-btn" data-lang="en">EN</button>
+          <button onclick="setLang('kz')" class="lang-btn" data-lang="kz">KZ</button>
+        </div>
+        <a href="#create" class="btn-primary px-5 py-2.5 text-sm hidden sm:inline-flex items-center gap-2" id="nav-create-btn" data-i18n="nav.create">Создать приглашение</a>
+        <button id="mobile-menu-btn" class="md:hidden p-2 text-gray-500"><i data-lucide="menu" class="w-5 h-5"></i></button>
+      </div>
+    </div>
+  </div>
+</nav>
+
+<!-- MOBILE MENU -->
+<div class="fixed inset-0 z-[45] pointer-events-none" id="mobile-menu-overlay">
+  <div class="absolute inset-0 bg-black/40 opacity-0 transition-opacity duration-300 pointer-events-none" id="mobile-menu-backdrop"></div>
+  <div class="absolute top-0 right-0 w-[300px] max-w-[85vw] h-full bg-white shadow-2xl transform translate-x-full pointer-events-auto flex flex-col" id="mobile-panel" style="transition:transform .35s cubic-bezier(.4,0,.2,1)">
+    <div class="flex items-center justify-between p-5 border-b border-gray-100">
+      <span class="font-display text-lg font-bold">POSE</span>
+      <button id="mobile-menu-close" class="p-2 text-gray-500"><i data-lucide="x" class="w-5 h-5"></i></button>
+    </div>
+    <div class="flex flex-col p-5 gap-4">
+      <a href="#" onclick="navigateTo('landing');closeMobile();return false;" class="text-base font-medium text-gray-600" data-i18n="nav.back">На главную</a>
+      <hr class="border-gray-100 my-1">
+      <div class="flex gap-2">
+        <button onclick="setLang('ru');closeMobile()" class="lang-btn active border border-gray-200 px-3 py-2" data-lang="ru">RU</button>
+        <button onclick="setLang('en');closeMobile()" class="lang-btn border border-gray-200 px-3 py-2" data-lang="en">EN</button>
+        <button onclick="setLang('kz');closeMobile()" class="lang-btn border border-gray-200 px-3 py-2" data-lang="kz">KZ</button>
+      </div>
+      <a href="#create" onclick="closeMobile()" class="btn-primary px-5 py-3 text-sm text-center mt-2" data-i18n="nav.create">Создать приглашение</a>
+    </div>
+  </div>
+</div>
+
+<!-- ======================== LANDING VIEW ======================== -->
+<main id="main-content">
+<div id="view-landing" class="view active">
+
+<!-- HERO -->
+<section class="gradient-bg relative min-h-screen flex items-center overflow-hidden">
+  <div class="absolute inset-0 overflow-hidden pointer-events-none">
+    <div class="absolute top-10 left-5 w-[500px] h-[500px] bg-purple-600/30 rounded-full blur-[120px] animate-blob"></div>
+    <div class="absolute bottom-10 right-5 w-[600px] h-[600px] bg-pink-500/25 rounded-full blur-[120px] animate-blob" style="animation-delay:2s"></div>
+    <div class="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[400px] h-[400px] bg-orange-400/15 rounded-full blur-[100px] animate-blob" style="animation-delay:4s"></div>
+    <div class="absolute top-24 right-[15%] text-5xl animate-float" style="animation-delay:0s">🎉</div>
+    <div class="absolute bottom-32 left-[15%] text-4xl animate-float" style="animation-delay:1.5s">🎂</div>
+    <div class="absolute top-[45%] right-[8%] text-4xl animate-float" style="animation-delay:3s">💍</div>
+    <div class="absolute bottom-[25%] right-[35%] text-3xl animate-float" style="animation-delay:0.7s">🎈</div>
+    <div class="absolute top-[30%] left-[8%] text-3xl animate-float" style="animation-delay:2.2s">✨</div>
+    <div class="absolute bottom-[15%] left-[45%] text-3xl animate-float" style="animation-delay:1s">🥳</div>
+  </div>
+  <div class="relative z-10 max-w-7xl mx-auto px-5 lg:px-10 pt-28 pb-24 w-full">
+    <div class="grid lg:grid-cols-2 gap-16 items-center">
+      <div>
+        <div class="inline-flex items-center gap-2 px-5 py-2.5 rounded-full glass mb-10 animate-fade-up">
+          <span class="w-2.5 h-2.5 rounded-full bg-teal-400 animate-pulse"></span>
+          <span class="text-white/80 text-sm font-medium" data-i18n="hero.badge">Алматы · Быстрые приглашения</span>
+        </div>
+        <h1 class="hero-title font-display text-[clamp(3.2rem,6.5vw,5rem)] font-bold text-white leading-[1.05] tracking-tight animate-fade-up" style="animation-delay:.1s">
+          <span data-i18n="hero.t1">Создавайте</span><br>
+          <span class="gradient-text-lg" data-i18n="hero.t2">яркие приглашения</span><br>
+          <span data-i18n="hero.t3">за минуту</span>
+        </h1>
+        <p class="mt-8 text-xl text-white/60 leading-relaxed max-w-lg animate-fade-up" style="animation-delay:.2s" data-i18n="hero.desc">Создайте стильное приглашение, отправьте друзьям, отслеживайте ответы. Никаких регистраций. Идеально для Алматы.</p>
+        <div class="mt-10 flex flex-wrap gap-4 animate-fade-up" style="animation-delay:.3s">
+          <a href="#create" class="btn-primary px-10 py-5 text-lg inline-flex items-center gap-3 animate-pulse-glow"><span data-i18n="hero.cta">Создать приглашение</span><i data-lucide="arrow-right" class="w-5 h-5"></i></a>
+        </div>
+        <div class="mt-12 flex flex-wrap items-center gap-4 animate-fade-up" style="animation-delay:.4s">
+          <div class="flex items-center gap-2 px-4 py-2 rounded-full glass">
+            <span class="text-teal-400 text-lg">✔</span>
+            <span class="text-white/70 text-sm font-medium" data-i18n="hero.perk1">Бесплатно</span>
+          </div>
+          <div class="flex items-center gap-2 px-4 py-2 rounded-full glass">
+            <span class="text-pink-400 text-lg">✔</span>
+            <span class="text-white/70 text-sm font-medium" data-i18n="hero.perk2">Без регистрации</span>
+          </div>
+          <div class="flex items-center gap-2 px-4 py-2 rounded-full glass">
+            <span class="text-amber-400 text-lg">✔</span>
+            <span class="text-white/70 text-sm font-medium" data-i18n="hero.perk3">Алматы</span>
+          </div>
+        </div>
+      </div>
+      <div class="hidden lg:block animate-fade-up" style="animation-delay:.5s">
+        <div class="demo-invite mx-auto max-w-sm animate-wiggle" style="animation-duration:6s">
+          <div class="relative">
+            <img src="https://images.unsplash.com/photo-1530103862676-de8c9debad1d?w=500&h=300&fit=crop" alt="" class="w-full h-48 object-cover">
+            <div class="absolute inset-0 bg-gradient-to-t from-black/60 to-transparent"></div>
+            <div class="absolute bottom-4 left-5 right-5">
+              <div class="text-white/70 text-xs font-medium uppercase tracking-wider" data-i18n="demo.badge">День рождения</div>
+              <div class="text-white text-xl font-display font-bold mt-1" data-i18n="demo.title">Вечеринка Айжан 🎉</div>
+            </div>
+          </div>
+          <div class="bg-white p-5">
+            <div class="flex items-center gap-3 mb-4">
+              <div class="w-10 h-10 rounded-xl bg-brand-100 flex items-center justify-center"><i data-lucide="calendar" class="w-5 h-5 text-brand-600"></i></div>
+              <div><div class="text-sm font-semibold" data-i18n="demo.date">15 июня, суббота</div><div class="text-xs text-gray-500" data-i18n="demo.time">19:00 — до утра</div></div>
+            </div>
+            <div class="flex items-center gap-3 mb-5">
+              <div class="w-10 h-10 rounded-xl bg-pink-100 flex items-center justify-center"><i data-lucide="map-pin" class="w-5 h-5 text-pink-600"></i></div>
+              <div><div class="text-sm font-semibold" data-i18n="demo.venue">Sky Lounge, Алматы</div><div class="text-xs text-gray-500" data-i18n="demo.address">пр. Аль-Фараби, 77</div></div>
+            </div>
+            <div class="flex gap-2 mb-4">
+              <button class="rsvp-btn flex-1 py-2.5 rounded-xl text-sm font-semibold bg-green-100 text-green-700 border-2 border-green-200 selected">Иду! 🙌</button>
+              <button class="rsvp-btn flex-1 py-2.5 rounded-xl text-sm font-semibold bg-yellow-50 text-yellow-700 border-2 border-yellow-200">Может быть</button>
+              <button class="rsvp-btn flex-1 py-2.5 rounded-xl text-sm font-semibold bg-gray-50 text-gray-500 border-2 border-gray-200">Не смогу</button>
+            </div>
+            <div class="flex items-center justify-between">
+              <div class="flex -space-x-1.5">
+                <div class="w-7 h-7 rounded-full border-2 border-white bg-pink-500 flex items-center justify-center text-[9px] font-bold text-white">А</div>
+                <div class="w-7 h-7 rounded-full border-2 border-white bg-teal-500 flex items-center justify-center text-[9px] font-bold text-white">С</div>
+                <div class="w-7 h-7 rounded-full border-2 border-white bg-amber-500 flex items-center justify-center text-[9px] font-bold text-white">Д</div>
+                <div class="w-7 h-7 rounded-full border-2 border-white bg-brand-100 flex items-center justify-center text-[9px] font-bold text-brand-600">+24</div>
+              </div>
+              <span class="text-xs text-gray-500" data-i18n="demo.guests">27 идут</span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- EVENT TYPES -->
+<div class="section-divider"></div>
+<section class="py-20 bg-white">
+  <div class="max-w-5xl mx-auto px-5 lg:px-10">
+    <div class="text-center mb-10">
+      <h2 class="font-display text-2xl md:text-3xl font-bold reveal" data-i18n="occasions.title">Для любого повода 🎊</h2>
+      <p class="mt-2 text-gray-500 text-base reveal reveal-d1" data-i18n="occasions.desc">Выберите тип события и получите готовый шаблон</p>
+    </div>
+    <div class="flex flex-wrap justify-center gap-3 reveal reveal-d2" id="event-types-bar"></div>
+  </div>
+</section>
+
+<!-- TEMPLATES -->
+<section id="templates" class="py-20 lg:py-28 bg-gradient-to-b from-white via-brand-50/30 to-white">
+  <div class="max-w-7xl mx-auto px-5 lg:px-10">
+    <div class="text-center max-w-xl mx-auto mb-14">
+      <div class="inline-flex items-center gap-2 px-5 py-2 rounded-full bg-gradient-to-r from-brand-100 to-pink-100 text-brand-700 text-xs font-bold mb-5 reveal" data-i18n="tpl.badge">ШАБЛОНЫ</div>
+      <h2 class="font-display text-3xl md:text-5xl font-bold reveal" data-i18n="tpl.title">Стильные шаблоны приглашений</h2>
+      <p class="mt-4 text-gray-500 text-lg reveal reveal-d1" data-i18n="tpl.desc">Кастомизируйте фон, шрифты, анимации. Никаких платных функций.</p>
+    </div>
+    <div class="grid sm:grid-cols-2 lg:grid-cols-3 gap-6" id="templates-grid"></div>
+  </div>
+</section>
+
+<div class="section-divider"></div>
+<!-- FEATURES -->
+<section id="features" class="py-20 lg:py-28 bg-gradient-to-b from-white to-brand-50/30">
+  <div class="max-w-7xl mx-auto px-5 lg:px-10">
+    <div class="text-center max-w-xl mx-auto mb-16">
+      <h2 class="font-display text-3xl md:text-5xl font-bold reveal" data-i18n="feat.title">Мощные функции, простые вечеринки</h2>
+      <p class="mt-4 text-gray-500 text-lg reveal reveal-d1" data-i18n="feat.desc">Всё, что нужно для организации идеального мероприятия</p>
+    </div>
+    <div class="grid md:grid-cols-2 lg:grid-cols-3 gap-6" id="features-grid"></div>
+  </div>
+</section>
+
+<!-- HOW IT WORKS -->
+<div class="section-divider"></div>
+<section id="how" class="py-20 lg:py-28 bg-gradient-to-b from-brand-50/30 to-white">
+  <div class="max-w-7xl mx-auto px-5 lg:px-10">
+    <div class="text-center max-w-xl mx-auto mb-16">
+      <h2 class="font-display text-3xl md:text-5xl font-bold reveal" data-i18n="how.title">Как это работает</h2>
+      <p class="mt-4 text-gray-500 text-lg reveal reveal-d1" data-i18n="how.desc">Три шага до идеального мероприятия</p>
+    </div>
+    <div class="grid md:grid-cols-3 gap-10 max-w-5xl mx-auto">
+      <div class="text-center reveal feature-card-v2">
+        <div class="w-20 h-20 rounded-2xl bg-gradient-to-br from-brand-400 to-brand-600 flex items-center justify-center mx-auto mb-6 shadow-xl shadow-brand-200/50"><i data-lucide="pencil" class="w-8 h-8 text-white"></i></div>
+        <div class="text-xs font-bold text-brand-400 tracking-widest uppercase mb-3">01</div>
+        <h3 class="font-display text-xl font-bold mb-3" data-i18n="how.s1t">Создайте</h3>
+        <p class="text-gray-500 text-sm leading-relaxed" data-i18n="how.s1d">Выберите шаблон, добавьте детали мероприятия — дату, место, описание</p>
+      </div>
+      <div class="text-center reveal reveal-d1 feature-card-v2">
+        <div class="w-20 h-20 rounded-2xl bg-gradient-to-br from-pink-400 to-pink-600 flex items-center justify-center mx-auto mb-6 shadow-xl shadow-pink-200/50"><i data-lucide="send" class="w-8 h-8 text-white"></i></div>
+        <div class="text-xs font-bold text-pink-400 tracking-widest uppercase mb-3">02</div>
+        <h3 class="font-display text-xl font-bold mb-3" data-i18n="how.s2t">Отправьте</h3>
+        <p class="text-gray-500 text-sm leading-relaxed" data-i18n="how.s2d">Поделитесь ссылкой через WhatsApp, Telegram, Instagram — или просто скопируйте</p>
+      </div>
+      <div class="text-center reveal reveal-d2 feature-card-v2">
+        <div class="w-20 h-20 rounded-2xl bg-gradient-to-br from-accent-400 to-accent-500 flex items-center justify-center mx-auto mb-6 shadow-xl shadow-orange-200/50"><i data-lucide="party-popper" class="w-8 h-8 text-white"></i></div>
+        <div class="text-xs font-bold text-accent-400 tracking-widest uppercase mb-3">03</div>
+        <h3 class="font-display text-xl font-bold mb-3" data-i18n="how.s3t">Отмечайте!</h3>
+        <p class="text-gray-500 text-sm leading-relaxed" data-i18n="how.s3d">Следите за ответами гостей, отправляйте обновления и делитесь фотографиями</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- SHARE SECTION -->
+<section class="py-20 lg:py-28 bg-gradient-to-b from-brand-50/30 to-white">
+  <div class="max-w-7xl mx-auto px-5 lg:px-10">
+    <div class="grid md:grid-cols-2 gap-12 items-center">
+      <div class="reveal">
+        <div class="inline-flex items-center gap-2 px-3 py-1.5 rounded-full bg-pink-100 text-pink-700 text-xs font-semibold mb-5" data-i18n="share.badge">ОТПРАВЛЯЙТЕ КУДА УГОДНО</div>
+        <h2 class="font-display text-3xl md:text-4xl font-bold mb-4" data-i18n="share.title">Делитесь через любой мессенджер</h2>
+        <p class="text-gray-500 text-base leading-relaxed mb-8" data-i18n="share.desc">WhatsApp, Telegram, Instagram, SMS — или просто скопируйте ссылку. Ваши гости откроют приглашение с любого устройства.</p>
+        <div class="flex flex-wrap gap-4">
+          <div class="flex items-center gap-3 px-5 py-3 rounded-2xl bg-green-50 border border-green-100"><span class="text-xl">💬</span><span class="text-sm font-semibold text-green-700">WhatsApp</span></div>
+          <div class="flex items-center gap-3 px-5 py-3 rounded-2xl bg-blue-50 border border-blue-100"><span class="text-xl">✈️</span><span class="text-sm font-semibold text-blue-600">Telegram</span></div>
+          <div class="flex items-center gap-3 px-5 py-3 rounded-2xl bg-gradient-to-r from-purple-50 to-pink-50 border border-purple-100"><i data-lucide="instagram" class="w-5 h-5 text-purple-600"></i><span class="text-sm font-semibold text-purple-700">Instagram</span></div>
+          <div class="flex items-center gap-3 px-5 py-3 rounded-2xl bg-gray-50 border border-gray-100"><i data-lucide="link" class="w-5 h-5 text-gray-500"></i><span class="text-sm font-semibold text-gray-600" data-i18n="share.copy">Ссылка</span></div>
+        </div>
+      </div>
+      <div class="reveal reveal-d2 flex justify-center">
+        <div class="relative">
+          <div class="w-64 h-[460px] rounded-[40px] bg-gray-900 p-3 shadow-2xl">
+            <div class="w-full h-full rounded-[32px] bg-white overflow-hidden flex flex-col">
+              <div class="bg-brand-600 px-4 pt-6 pb-4">
+                <div class="text-white/70 text-[10px] font-semibold uppercase tracking-wider mb-1" data-i18n="phone.badge">Приглашение</div>
+                <div class="text-white text-base font-display font-bold" data-i18n="phone.title">Свадьба Дана & Арман 💒</div>
+                <div class="text-white/60 text-xs mt-1" data-i18n="phone.date">24 августа, 18:00</div>
+              </div>
+              <div class="flex-1 px-4 py-3 overflow-hidden">
+                <div class="flex items-center gap-2 mb-3">
+                  <div class="w-8 h-8 rounded-lg bg-brand-100 flex items-center justify-center"><i data-lucide="map-pin" class="w-4 h-4 text-brand-600"></i></div>
+                  <div><div class="text-xs font-semibold" data-i18n="phone.venue">Rixos Almaty</div><div class="text-[10px] text-gray-500" data-i18n="phone.addr">пр. Сейфуллина, 506</div></div>
+                </div>
+                <div class="text-xs text-gray-500 mb-3" data-i18n="phone.msg">Дорогие друзья! Мы будем счастливы разделить этот день с вами.</div>
+                <div class="flex gap-1.5 mb-3">
+                  <button class="flex-1 py-2 rounded-lg text-[10px] font-bold bg-green-100 text-green-700">Иду! 🙌</button>
+                  <button class="flex-1 py-2 rounded-lg text-[10px] font-bold bg-yellow-50 text-yellow-700">Может</button>
+                  <button class="flex-1 py-2 rounded-lg text-[10px] font-bold bg-gray-50 text-gray-500">Нет</button>
+                </div>
+                <div class="text-[10px] font-semibold text-gray-600 mb-2" data-i18n="phone.guestlist">Кто идёт (42)</div>
+                <div class="flex flex-wrap gap-1.5 mb-3">
+                  <div class="w-6 h-6 rounded-full bg-pink-500 flex items-center justify-center text-[8px] font-bold text-white">А</div><div class="w-6 h-6 rounded-full bg-teal-500 flex items-center justify-center text-[8px] font-bold text-white">С</div><div class="w-6 h-6 rounded-full bg-amber-500 flex items-center justify-center text-[8px] font-bold text-white">Н</div><div class="w-6 h-6 rounded-full bg-blue-500 flex items-center justify-center text-[8px] font-bold text-white">К</div>
+                  <div class="w-6 h-6 rounded-full bg-brand-100 flex items-center justify-center text-[8px] font-bold text-brand-600">+38</div>
+                </div>
+                <div class="bg-gray-50 rounded-lg p-2">
+                  <div class="flex items-start gap-2"><div class="w-5 h-5 rounded-full bg-brand-500 flex items-center justify-center text-[7px] font-bold text-white flex-shrink-0 mt-0.5">А</div><div><span class="text-[10px] font-semibold">Алия</span><p class="text-[10px] text-gray-500" data-i18n="phone.comment">Как же я жду! 😍</p></div></div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- CREATE EVENT -->
+<div class="section-divider"></div>
+<section id="create" class="create-section py-20 lg:py-28">
+  <div class="max-w-5xl mx-auto px-5 lg:px-10 relative">
+    <div class="text-center mb-12">
+      <h2 class="font-display text-3xl md:text-5xl font-bold reveal">
+        <span data-i18n="create.title">Создайте приглашение</span>
+      </h2>
+      <p class="mt-4 text-gray-500 text-lg reveal reveal-d1" data-i18n="create.desc">Заполните детали — и поделитесь с друзьями</p>
+    </div>
+    <div class="grid lg:grid-cols-5 gap-8">
+    <div class="lg:col-span-3 bg-white rounded-3xl border border-brand-100/50 p-7 md:p-10 shadow-2xl shadow-brand-200/30 reveal reveal-d2">
+      <div class="space-y-6">
+        <div>
+          <label class="block text-sm font-semibold mb-3" data-i18n="create.type">Тип мероприятия</label>
+          <div class="flex flex-wrap gap-2" id="create-event-types"></div>
+        </div>
+        <div>
+          <label class="block text-sm font-semibold mb-2" data-i18n="create.name">Название</label>
+          <input id="ev-name" type="text" class="w-full px-4 py-3 rounded-xl border-2 border-gray-100 text-sm" data-placeholder-i18n="create.name_ph" aria-label="Event name" required>
+        </div>
+        <div class="grid sm:grid-cols-2 gap-4">
+          <div><label class="block text-sm font-semibold mb-2" data-i18n="create.date">Дата</label><input id="ev-date" type="date" class="w-full px-4 py-3 rounded-xl border-2 border-gray-100 text-sm" aria-label="Event date" required></div>
+          <div><label class="block text-sm font-semibold mb-2" data-i18n="create.time">Время</label><input id="ev-time" type="time" value="19:00" class="w-full px-4 py-3 rounded-xl border-2 border-gray-100 text-sm" aria-label="Event time"></div>
+        </div>
+        <div>
+          <label class="block text-sm font-semibold mb-2" data-i18n="create.location">Место</label>
+          <input id="ev-location" type="text" class="w-full px-4 py-3 rounded-xl border-2 border-gray-100 text-sm" data-placeholder-i18n="create.loc_ph" aria-label="Event location">
+        </div>
+        <div>
+          <label class="block text-sm font-semibold mb-2" data-i18n="create.message">Сообщение для гостей</label>
+          <div class="flex items-center gap-1 mb-1">
+            <button type="button" onclick="insertMdFormat('bold')" class="w-8 h-8 rounded-lg bg-gray-100 hover:bg-brand-100 text-sm font-bold text-gray-600 hover:text-brand-700" title="Bold" aria-label="Bold">B</button>
+            <button type="button" onclick="insertMdFormat('italic')" class="w-8 h-8 rounded-lg bg-gray-100 hover:bg-brand-100 text-sm italic text-gray-600 hover:text-brand-700" title="Italic" aria-label="Italic">I</button>
+            <button type="button" onclick="insertMdFormat('list')" class="w-8 h-8 rounded-lg bg-gray-100 hover:bg-brand-100 text-sm text-gray-600 hover:text-brand-700" title="List" aria-label="List">•</button>
+            <button type="button" onclick="insertMdFormat('🎉')" class="w-8 h-8 rounded-lg bg-gray-100 hover:bg-brand-100 text-sm" title="Confetti" aria-label="Confetti emoji">🎉</button>
+            <button type="button" onclick="insertMdFormat('🎂')" class="w-8 h-8 rounded-lg bg-gray-100 hover:bg-brand-100 text-sm" title="Cake" aria-label="Cake emoji">🎂</button>
+            <button type="button" onclick="insertMdFormat('💍')" class="w-8 h-8 rounded-lg bg-gray-100 hover:bg-brand-100 text-sm" title="Ring" aria-label="Ring emoji">💍</button>
+            <button type="button" onclick="insertMdFormat('❤️')" class="w-8 h-8 rounded-lg bg-gray-100 hover:bg-brand-100 text-sm" title="Heart" aria-label="Heart emoji">❤️</button>
+          </div>
+          <textarea id="ev-desc" rows="3" class="w-full px-4 py-3 rounded-xl border-2 border-gray-100 text-sm resize-none" data-placeholder-i18n="create.msg_ph" aria-label="Event description"></textarea>
+        </div>
+        <div>
+          <label class="block text-sm font-semibold mb-2" data-i18n="create.host">Ваше имя (организатор)</label>
+          <input id="ev-host" type="text" class="w-full px-4 py-3 rounded-xl border-2 border-gray-100 text-sm" data-placeholder-i18n="create.host_ph" aria-label="Organizer name">
+        </div>
+        <div>
+          <label class="block text-sm font-semibold mb-3" data-i18n="create.poster">Обложка приглашения</label>
+          <div class="relative">
+            <div class="poster-carousel" id="poster-picks"></div>
+            <button type="button" onclick="document.getElementById('poster-picks').scrollBy({left:-280,behavior:'smooth'})" class="absolute left-0 top-1/2 -translate-y-1/2 -ml-3 w-9 h-9 bg-white rounded-full shadow-lg flex items-center justify-center text-brand-600 hover:bg-brand-50 z-10 border border-gray-200" style="font-size:18px;font-weight:700">&lsaquo;</button>
+            <button type="button" onclick="document.getElementById('poster-picks').scrollBy({left:280,behavior:'smooth'})" class="absolute right-0 top-1/2 -translate-y-1/2 -mr-3 w-9 h-9 bg-white rounded-full shadow-lg flex items-center justify-center text-brand-600 hover:bg-brand-50 z-10 border border-gray-200" style="font-size:18px;font-weight:700">&rsaquo;</button>
+          </div>
+        </div>
+        <div>
+          <label class="block text-sm font-semibold mb-3" data-i18n="create.font">Шрифт заголовка</label>
+          <div class="flex flex-wrap gap-2" id="font-picks"></div>
+        </div>
+        <div>
+          <label class="block text-sm font-semibold mb-3" data-i18n="create.style">Цветовая тема (если нет обложки)</label>
+          <div class="flex gap-3" id="style-picks">
+            <div class="style-pick active w-12 h-12 rounded-xl cursor-pointer border-2 border-brand-400 bg-gradient-to-br from-brand-400 to-pink-500 shadow-lg shadow-brand-200" data-style="gradient"></div>
+            <div class="style-pick w-12 h-12 rounded-xl cursor-pointer border-2 border-transparent bg-gradient-to-br from-teal-400 to-blue-500" data-style="ocean"></div>
+            <div class="style-pick w-12 h-12 rounded-xl cursor-pointer border-2 border-transparent bg-gradient-to-br from-amber-400 to-orange-500" data-style="sunset"></div>
+            <div class="style-pick w-12 h-12 rounded-xl cursor-pointer border-2 border-transparent bg-gradient-to-br from-emerald-400 to-teal-600" data-style="forest"></div>
+            <div class="style-pick w-12 h-12 rounded-xl cursor-pointer border-2 border-transparent bg-gradient-to-br from-slate-700 to-slate-900" data-style="dark"></div>
+            <div class="style-pick w-12 h-12 rounded-xl cursor-pointer border-2 border-transparent bg-gradient-to-br from-rose-400 to-red-500" data-style="rose"></div>
+          </div>
+        </div>
+        <div>
+          <label class="block text-sm font-semibold mb-2" data-i18n="create.kaspi">Kaspi для сбора (необязательно)</label>
+          <input id="ev-kaspi" type="text" class="w-full px-4 py-3 rounded-xl border-2 border-gray-100 text-sm" data-placeholder-i18n="create.kaspi_ph">
+        </div>
+        <div>
+          <label class="block text-sm font-semibold mb-2" data-i18n="create.questions_label">Вопросы гостям (необязательно)</label>
+          <div id="questions-list" class="space-y-2 mb-2"></div>
+          <div class="flex gap-2">
+            <input id="new-question" type="text" class="flex-1 px-4 py-2.5 rounded-xl border-2 border-gray-100 text-sm" data-placeholder-i18n="create.q_ph">
+            <button type="button" onclick="addQuestion()" class="btn-secondary px-4 py-2.5 text-sm">+</button>
+          </div>
+        </div>
+        <button id="create-btn" class="btn-primary w-full py-5 text-lg flex items-center justify-center gap-3">
+          <i data-lucide="sparkles" class="w-5 h-5"></i>
+          <span data-i18n="create.btn">Создать и поделиться</span>
+        </button>
+      </div>
+    </div>
+    <!-- LIVE PREVIEW -->
+    <div class="lg:col-span-2 reveal reveal-d3">
+      <div class="sticky top-24">
+        <div class="text-center mb-4">
+          <span class="text-xs font-bold text-brand-400 uppercase tracking-widest" data-i18n="create.preview_label">Предпросмотр</span>
+        </div>
+        <div id="live-preview" class="preview-card">
+          <div id="preview-header" class="p-6 text-white relative overflow-hidden bg-gradient-to-br from-brand-500 to-pink-500" style="min-height:180px">
+            <div class="relative z-10">
+              <div class="text-xs font-semibold uppercase tracking-wider opacity-70 mb-2" id="preview-type">🎉 Вечеринка</div>
+              <h3 class="font-display text-2xl font-bold leading-tight" id="preview-title">Ваше событие</h3>
+              <div class="mt-3 text-sm opacity-70" id="preview-details"></div>
+            </div>
+          </div>
+          <div class="bg-white p-5">
+            <div class="flex gap-2 mb-3">
+              <div class="flex-1 py-2 rounded-xl text-xs font-bold bg-green-100 text-green-700 text-center">Иду! 🙌</div>
+              <div class="flex-1 py-2 rounded-xl text-xs font-bold bg-yellow-50 text-yellow-700 text-center">Может быть</div>
+              <div class="flex-1 py-2 rounded-xl text-xs font-bold bg-gray-50 text-gray-500 text-center">Не смогу</div>
+            </div>
+            <div class="flex -space-x-1.5">
+              <div class="w-6 h-6 rounded-full bg-pink-500 flex items-center justify-center text-[8px] font-bold text-white">А</div>
+              <div class="w-6 h-6 rounded-full bg-teal-500 flex items-center justify-center text-[8px] font-bold text-white">С</div>
+              <div class="w-6 h-6 rounded-full bg-amber-500 flex items-center justify-center text-[8px] font-bold text-white">Д</div>
+              <div class="w-6 h-6 rounded-full bg-brand-100 flex items-center justify-center text-[8px] font-bold text-brand-600">+24</div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+    </div>
+  </div>
+</section>
+
+<!-- REVIEWS -->
+<!-- MARQUEE -->
+<section class="py-8 gradient-mesh overflow-hidden">
+  <div class="marquee">
+    <div class="marquee-inner text-white/90 text-sm font-medium">
+      <span class="mx-8">🎉 Дни рождения</span><span class="mx-8">💍 Свадьбы</span><span class="mx-8">🍼 Baby Shower</span><span class="mx-8">🎓 Выпускные</span><span class="mx-8">🏠 Новоселья</span><span class="mx-8">🎊 Корпоративы</span><span class="mx-8">🍽️ Ужины</span><span class="mx-8">📍 Алматы</span>
+      <span class="mx-8">🎉 Дни рождения</span><span class="mx-8">💍 Свадьбы</span><span class="mx-8">🍼 Baby Shower</span><span class="mx-8">🎓 Выпускные</span><span class="mx-8">🏠 Новоселья</span><span class="mx-8">🎊 Корпоративы</span><span class="mx-8">🍽️ Ужины</span><span class="mx-8">📍 Алматы</span>
+    </div>
+  </div>
+</section>
+
+<section id="why-pose" class="py-20 lg:py-28 bg-gray-50">
+  <div class="max-w-7xl mx-auto px-5 lg:px-10">
+    <div class="text-center max-w-xl mx-auto mb-14">
+      <h2 class="font-display text-3xl md:text-4xl font-bold reveal" data-i18n="why.title">Почему POSE?</h2>
+      <p class="mt-3 text-gray-500 text-base reveal reveal-d1" data-i18n="why.desc">Всё что нужно для идеального мероприятия</p>
+    </div>
+    <div class="grid md:grid-cols-3 gap-6" id="why-grid">
+      <div class="bg-white rounded-3xl border-2 border-gray-100 p-8 card-hover reveal reveal-d1 text-center">
+        <div class="w-16 h-16 mx-auto mb-5 rounded-2xl bg-gradient-to-br from-purple-500 to-pink-500 flex items-center justify-center"><i data-lucide="zap" class="w-8 h-8 text-white"></i></div>
+        <h3 class="text-lg font-bold mb-2" data-i18n="why.fast_title">2 минуты</h3>
+        <p class="text-gray-500 text-sm" data-i18n="why.fast_desc">Создайте стильное приглашение быстрее, чем закажете кофе</p>
+      </div>
+      <div class="bg-white rounded-3xl border-2 border-gray-100 p-8 card-hover reveal reveal-d2 text-center">
+        <div class="w-16 h-16 mx-auto mb-5 rounded-2xl bg-gradient-to-br from-teal-500 to-emerald-500 flex items-center justify-center"><i data-lucide="users" class="w-8 h-8 text-white"></i></div>
+        <h3 class="text-lg font-bold mb-2" data-i18n="why.noreg_title">Без регистрации</h3>
+        <p class="text-gray-500 text-sm" data-i18n="why.noreg_desc">Ни вам, ни гостям не нужен аккаунт — просто отправьте ссылку</p>
+      </div>
+      <div class="bg-white rounded-3xl border-2 border-gray-100 p-8 card-hover reveal reveal-d3 text-center">
+        <div class="w-16 h-16 mx-auto mb-5 rounded-2xl bg-gradient-to-br from-amber-500 to-orange-500 flex items-center justify-center"><i data-lucide="smartphone" class="w-8 h-8 text-white"></i></div>
+        <h3 class="text-lg font-bold mb-2" data-i18n="why.share_title">WhatsApp & Telegram</h3>
+        <p class="text-gray-500 text-sm" data-i18n="why.share_desc">Делитесь через мессенджеры, которыми пользуется весь Алматы</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- CTA -->
+<section class="py-24 lg:py-32 gradient-bg relative overflow-hidden">
+  <div class="absolute inset-0 overflow-hidden pointer-events-none">
+    <div class="absolute top-10 left-10 w-[400px] h-[400px] bg-purple-500/25 rounded-full blur-[100px] animate-blob"></div>
+    <div class="absolute bottom-10 right-10 w-[500px] h-[500px] bg-pink-500/20 rounded-full blur-[100px] animate-blob" style="animation-delay:3s"></div>
+    <div class="absolute top-1/2 left-1/2 w-[300px] h-[300px] bg-orange-400/15 rounded-full blur-[80px] animate-blob" style="animation-delay:6s"></div>
+  </div>
+  <div class="relative z-10 max-w-2xl mx-auto px-5 text-center">
+    <div class="text-6xl mb-8 reveal">🎉</div>
+    <h2 class="font-display text-4xl md:text-5xl lg:text-6xl font-bold text-white tracking-tight reveal"><span data-i18n="cta.t1">Давайте устроим</span><br><span class="gradient-text-lg" data-i18n="cta.t2">вечеринку!</span></h2>
+    <p class="mt-6 text-white/50 text-lg leading-relaxed reveal reveal-d1" data-i18n="cta.desc">Создайте первое приглашение за 30 секунд. Бесплатно, навсегда.</p>
+    <div class="mt-10 reveal reveal-d2"><a href="#create" class="btn-primary px-12 py-5 text-lg inline-flex items-center gap-3 animate-pulse-glow"><span data-i18n="cta.btn">Создать приглашение</span><i data-lucide="arrow-right" class="w-5 h-5"></i></a></div>
+  </div>
+</section>
+
+<!-- FOOTER -->
+<footer class="bg-dark-900 text-white/40 pt-16 pb-8">
+  <div class="max-w-7xl mx-auto px-5 lg:px-10">
+    <div class="grid sm:grid-cols-3 gap-10 pb-12 border-b border-white/10">
+      <div>
+        <div class="flex items-center gap-2 mb-4"><div class="w-8 h-8 rounded-xl bg-gradient-to-br from-brand-500 to-pink-500 flex items-center justify-center"><i data-lucide="party-popper" class="w-4 h-4 text-white"></i></div><span class="font-display text-xl font-bold text-white">POSE</span></div>
+        <p class="text-[13px] leading-relaxed" data-i18n="foot.about">Бесплатная платформа для создания приглашений и управления мероприятиями в Алматы.</p>
+      </div>
+      <div>
+        <h4 class="text-white text-[13px] font-semibold mb-4 tracking-wide" data-i18n="foot.nav">Навигация</h4>
+        <ul class="space-y-2.5 text-[13px]"><li><a href="#templates" class="hover:text-brand-400 transition-colors" data-i18n="nav.templates">Шаблоны</a></li><li><a href="#features" class="hover:text-brand-400 transition-colors" data-i18n="nav.features">Возможности</a></li><li><a href="#how" class="hover:text-brand-400 transition-colors" data-i18n="nav.how">Как это работает</a></li></ul>
+      </div>
+      <div>
+        <h4 class="text-white text-[13px] font-semibold mb-4 tracking-wide" data-i18n="foot.contact">Контакты</h4>
+        <ul class="space-y-2.5 text-[13px]"><li class="flex items-center gap-2"><i data-lucide="mail" class="w-3.5 h-3.5 text-brand-400"></i>hello@pose.kz</li><li class="flex items-center gap-2"><i data-lucide="map-pin" class="w-3.5 h-3.5 text-brand-400"></i><span data-i18n="foot.city">Алматы, Казахстан</span></li></ul>
+      </div>
+    </div>
+    <div class="flex flex-col sm:flex-row items-center justify-between pt-7 gap-3 text-[11px] text-white/20"><p>&copy; 2025 POSE. <span data-i18n="foot.rights">Все права защищены.</span></p><p>pose.kz</p></div>
+  </div>
+</footer>
+
+</div><!-- /view-landing -->
+
+<!-- ======================== EVENT VIEW ======================== -->
+<div id="view-event" class="view">
+  <div class="pt-20 pb-16 min-h-screen bg-gradient-to-b from-brand-50/50 via-white to-brand-50/30">
+    <div class="max-w-4xl mx-auto px-5 lg:px-10">
+      <!-- Event header card -->
+      <div id="event-header" class="rounded-3xl overflow-hidden shadow-2xl shadow-brand-200/30 mb-8"></div>
+
+      <!-- Countdown -->
+      <div id="event-countdown" class="mb-8"></div>
+
+      <!-- Share bar + Calendar + QR -->
+      <div id="event-share-bar" class="event-info-card p-6 mb-8 flex flex-wrap items-center gap-3"></div>
+
+      <!-- Map -->
+      <div id="event-map" class="mb-8"></div>
+
+      <!-- Kaspi -->
+      <div id="event-kaspi" class="mb-8"></div>
+
+      <!-- Tabs -->
+      <div class="flex border-b-2 border-brand-100 mb-8 gap-8 overflow-x-auto" role="tablist" aria-label="Event sections">
+        <button class="tab-btn active pb-3 text-sm font-bold whitespace-nowrap" data-tab="rsvp" data-i18n="ev.tab_rsvp" role="tab" aria-selected="true" aria-controls="tab-rsvp">Гости</button>
+        <button class="tab-btn pb-3 text-sm font-bold text-gray-500 whitespace-nowrap" data-tab="comments" data-i18n="ev.tab_comments" role="tab" aria-selected="false" aria-controls="tab-comments">Комментарии</button>
+        <button class="tab-btn pb-3 text-sm font-bold text-gray-500 whitespace-nowrap" data-tab="updates" data-i18n="ev.tab_updates" role="tab" aria-selected="false" aria-controls="tab-updates">Обновления</button>
+      </div>
+
+      <!-- Tab content: RSVP -->
+      <div id="tab-rsvp" class="tab-content" role="tabpanel" aria-labelledby="tab-rsvp">
+        <div id="rsvp-section" class="event-info-card p-6 mb-6"></div>
+        <div id="guest-list-section" class="event-info-card p-6"></div>
+      </div>
+
+      <!-- Tab content: Comments -->
+      <div id="tab-comments" class="tab-content" role="tabpanel" aria-labelledby="tab-comments" style="display:none">
+        <div id="comments-section" class="event-info-card p-6"></div>
+      </div>
+
+      <!-- Tab content: Updates -->
+      <div id="tab-updates" class="tab-content" role="tabpanel" aria-labelledby="tab-updates" style="display:none">
+        <div id="updates-section" class="event-info-card p-6"></div>
+      </div>
+    </div>
+  </div>
+</div><!-- /view-event -->
+
+</main>
+<!-- TOAST -->
+<div class="fixed bottom-5 right-5 z-[60] flex flex-col gap-2" id="toast-box"></div>
+
+<script>
+// ===== i18n =====
+var L={
+ru:{
+  nav:{templates:'\u0428\u0430\u0431\u043b\u043e\u043d\u044b',features:'\u0412\u043e\u0437\u043c\u043e\u0436\u043d\u043e\u0441\u0442\u0438',how:'\u041a\u0430\u043a \u044d\u0442\u043e \u0440\u0430\u0431\u043e\u0442\u0430\u0435\u0442',why:'\u041f\u043e\u0447\u0435\u043c\u0443 POSE',create:'\u0421\u043e\u0437\u0434\u0430\u0442\u044c \u043f\u0440\u0438\u0433\u043b\u0430\u0448\u0435\u043d\u0438\u0435',back:'\u041d\u0430 \u0433\u043b\u0430\u0432\u043d\u0443\u044e'},
+  hero:{badge:'\u0410\u043b\u043c\u0430\u0442\u044b \u00b7 \u0411\u044b\u0441\u0442\u0440\u044b\u0435 \u043f\u0440\u0438\u0433\u043b\u0430\u0448\u0435\u043d\u0438\u044f',t1:'\u0421\u043e\u0437\u0434\u0430\u0432\u0430\u0439\u0442\u0435',t2:'\u044f\u0440\u043a\u0438\u0435 \u043f\u0440\u0438\u0433\u043b\u0430\u0448\u0435\u043d\u0438\u044f',t3:'\u0437\u0430 \u043c\u0438\u043d\u0443\u0442\u0443',desc:'\u0421\u043e\u0437\u0434\u0430\u0439\u0442\u0435 \u0441\u0442\u0438\u043b\u044c\u043d\u043e\u0435 \u043f\u0440\u0438\u0433\u043b\u0430\u0448\u0435\u043d\u0438\u0435, \u043e\u0442\u043f\u0440\u0430\u0432\u044c\u0442\u0435 \u0434\u0440\u0443\u0437\u044c\u044f\u043c, \u043e\u0442\u0441\u043b\u0435\u0436\u0438\u0432\u0430\u0439\u0442\u0435 \u043e\u0442\u0432\u0435\u0442\u044b. \u041d\u0438\u043a\u0430\u043a\u0438\u0445 \u0440\u0435\u0433\u0438\u0441\u0442\u0440\u0430\u0446\u0438\u0439. \u0418\u0434\u0435\u0430\u043b\u044c\u043d\u043e \u0434\u043b\u044f \u0410\u043b\u043c\u0430\u0442\u044b.',cta:'\u0421\u043e\u0437\u0434\u0430\u0442\u044c \u043f\u0440\u0438\u0433\u043b\u0430\u0448\u0435\u043d\u0438\u0435',perk1:'\u0411\u0435\u0441\u043f\u043b\u0430\u0442\u043d\u043e',perk2:'\u0411\u0435\u0437 \u0440\u0435\u0433\u0438\u0441\u0442\u0440\u0430\u0446\u0438\u0438',perk3:'\u0410\u043b\u043c\u0430\u0442\u044b'},
+  demo:{badge:'\u0414\u0435\u043d\u044c \u0440\u043e\u0436\u0434\u0435\u043d\u0438\u044f',title:'\u0412\u0435\u0447\u0435\u0440\u0438\u043d\u043a\u0430 \u0410\u0439\u0436\u0430\u043d \ud83c\udf89',date:'15 \u0438\u044e\u043d\u044f, \u0441\u0443\u0431\u0431\u043e\u0442\u0430',time:'19:00 \u2014 \u0434\u043e \u0443\u0442\u0440\u0430',venue:'Sky Lounge, \u0410\u043b\u043c\u0430\u0442\u044b',address:'\u043f\u0440. \u0410\u043b\u044c-\u0424\u0430\u0440\u0430\u0431\u0438, 77',going:'\u0418\u0434\u0443! \ud83d\ude4c',maybe:'\u041c\u043e\u0436\u0435\u0442 \u0431\u044b\u0442\u044c',cant:'\u041d\u0435 \u0441\u043c\u043e\u0433\u0443',guests:'27 \u0438\u0434\u0443\u0442'},
+  occasions:{title:'\u0414\u043b\u044f \u043b\u044e\u0431\u043e\u0433\u043e \u043f\u043e\u0432\u043e\u0434\u0430 \ud83c\udf8a',desc:'\u0412\u044b\u0431\u0435\u0440\u0438\u0442\u0435 \u0442\u0438\u043f \u0441\u043e\u0431\u044b\u0442\u0438\u044f \u0438 \u043f\u043e\u043b\u0443\u0447\u0438\u0442\u0435 \u0433\u043e\u0442\u043e\u0432\u044b\u0439 \u0448\u0430\u0431\u043b\u043e\u043d'},
+  tpl:{badge:'\u0428\u0410\u0411\u041b\u041e\u041d\u042b',title:'\u0421\u0442\u0438\u043b\u044c\u043d\u044b\u0435 \u0448\u0430\u0431\u043b\u043e\u043d\u044b \u043f\u0440\u0438\u0433\u043b\u0430\u0448\u0435\u043d\u0438\u0439',desc:'\u041a\u0430\u0441\u0442\u043e\u043c\u0438\u0437\u0438\u0440\u0443\u0439\u0442\u0435 \u0444\u043e\u043d, \u0448\u0440\u0438\u0444\u0442\u044b, \u0430\u043d\u0438\u043c\u0430\u0446\u0438\u0438. \u041d\u0438\u043a\u0430\u043a\u0438\u0445 \u043f\u043b\u0430\u0442\u043d\u044b\u0445 \u0444\u0443\u043d\u043a\u0446\u0438\u0439.'},
+  feat:{title:'\u041c\u043e\u0449\u043d\u044b\u0435 \u0444\u0443\u043d\u043a\u0446\u0438\u0438, \u043f\u0440\u043e\u0441\u0442\u044b\u0435 \u0432\u0435\u0447\u0435\u0440\u0438\u043d\u043a\u0438',desc:'\u0412\u0441\u0451, \u0447\u0442\u043e \u043d\u0443\u0436\u043d\u043e \u0434\u043b\u044f \u043e\u0440\u0433\u0430\u043d\u0438\u0437\u0430\u0446\u0438\u0438 \u0438\u0434\u0435\u0430\u043b\u044c\u043d\u043e\u0433\u043e \u043c\u0435\u0440\u043e\u043f\u0440\u0438\u044f\u0442\u0438\u044f'},
+  how:{title:'\u041a\u0430\u043a \u044d\u0442\u043e \u0440\u0430\u0431\u043e\u0442\u0430\u0435\u0442',desc:'\u0422\u0440\u0438 \u0448\u0430\u0433\u0430 \u0434\u043e \u0438\u0434\u0435\u0430\u043b\u044c\u043d\u043e\u0433\u043e \u043c\u0435\u0440\u043e\u043f\u0440\u0438\u044f\u0442\u0438\u044f',s1t:'\u0421\u043e\u0437\u0434\u0430\u0439\u0442\u0435',s1d:'\u0412\u044b\u0431\u0435\u0440\u0438\u0442\u0435 \u0448\u0430\u0431\u043b\u043e\u043d, \u0434\u043e\u0431\u0430\u0432\u044c\u0442\u0435 \u0434\u0435\u0442\u0430\u043b\u0438 \u043c\u0435\u0440\u043e\u043f\u0440\u0438\u044f\u0442\u0438\u044f',s2t:'\u041e\u0442\u043f\u0440\u0430\u0432\u044c\u0442\u0435',s2d:'\u041f\u043e\u0434\u0435\u043b\u0438\u0442\u0435\u0441\u044c \u0441\u0441\u044b\u043b\u043a\u043e\u0439 \u0447\u0435\u0440\u0435\u0437 WhatsApp, Telegram, Instagram',s3t:'\u041e\u0442\u043c\u0435\u0447\u0430\u0439\u0442\u0435!',s3d:'\u0421\u043b\u0435\u0434\u0438\u0442\u0435 \u0437\u0430 \u043e\u0442\u0432\u0435\u0442\u0430\u043c\u0438 \u0433\u043e\u0441\u0442\u0435\u0439, \u043e\u0442\u043f\u0440\u0430\u0432\u043b\u044f\u0439\u0442\u0435 \u043e\u0431\u043d\u043e\u0432\u043b\u0435\u043d\u0438\u044f'},
+  share:{badge:'\u041e\u0422\u041f\u0420\u0410\u0412\u041b\u042f\u0419\u0422\u0415 \u041a\u0423\u0414\u0410 \u0423\u0413\u041e\u0414\u041d\u041e',title:'\u0414\u0435\u043b\u0438\u0442\u0435\u0441\u044c \u0447\u0435\u0440\u0435\u0437 \u043b\u044e\u0431\u043e\u0439 \u043c\u0435\u0441\u0441\u0435\u043d\u0434\u0436\u0435\u0440',desc:'WhatsApp, Telegram, Instagram, SMS \u2014 \u0438\u043b\u0438 \u043f\u0440\u043e\u0441\u0442\u043e \u0441\u043a\u043e\u043f\u0438\u0440\u0443\u0439\u0442\u0435 \u0441\u0441\u044b\u043b\u043a\u0443.',copy:'\u0421\u0441\u044b\u043b\u043a\u0430'},
+  phone:{badge:'\u041f\u0440\u0438\u0433\u043b\u0430\u0448\u0435\u043d\u0438\u0435',title:'\u0421\u0432\u0430\u0434\u044c\u0431\u0430 \u0414\u0430\u043d\u0430 & \u0410\u0440\u043c\u0430\u043d \ud83d\udc92',date:'24 \u0430\u0432\u0433\u0443\u0441\u0442\u0430, 18:00',venue:'Rixos Almaty',addr:'\u043f\u0440. \u0421\u0435\u0439\u0444\u0443\u043b\u043b\u0438\u043d\u0430, 506',msg:'\u0414\u043e\u0440\u043e\u0433\u0438\u0435 \u0434\u0440\u0443\u0437\u044c\u044f! \u041c\u044b \u0431\u0443\u0434\u0435\u043c \u0441\u0447\u0430\u0441\u0442\u043b\u0438\u0432\u044b \u0440\u0430\u0437\u0434\u0435\u043b\u0438\u0442\u044c \u044d\u0442\u043e\u0442 \u0434\u0435\u043d\u044c \u0441 \u0432\u0430\u043c\u0438.',guestlist:'\u041a\u0442\u043e \u0438\u0434\u0451\u0442 (42)',comment:'\u041a\u0430\u043a \u0436\u0435 \u044f \u0436\u0434\u0443! \ud83d\ude0d'},
+  create:{title:'Создайте приглашение',desc:'Заполните детали — и поделитесь с друзьями',type:'Тип мероприятия',name:'Название',name_ph:'Вечеринка Айжан 🎉',date:'Дата',time:'Время',location:'Место',loc_ph:'Sky Lounge, пр. Аль-Фараби, 77',message:'Сообщение для гостей',msg_ph:'Приходите отмечать! Будет весело 🎉',style:'Цветовая тема',btn:'Создать и поделиться',host:'Ваше имя (организатор)',host_ph:'Айжан',poster:'Обложка приглашения',font:'Шрифт заголовка',kaspi:'Kaspi для сбора (необязательно)',kaspi_ph:'Номер телефона или Kaspi QR ссылка',questions_label:'Вопросы гостям (необязательно)',q_ph:'Например: Что принесёте?',preview_label:'Предпросмотр'},
+  why:{title:'\u041f\u043e\u0447\u0435\u043c\u0443 POSE?',desc:'\u0412\u0441\u0451 \u0447\u0442\u043e \u043d\u0443\u0436\u043d\u043e \u0434\u043b\u044f \u0438\u0434\u0435\u0430\u043b\u044c\u043d\u043e\u0433\u043e \u043c\u0435\u0440\u043e\u043f\u0440\u0438\u044f\u0442\u0438\u044f',fast_title:'2 \u043c\u0438\u043d\u0443\u0442\u044b',fast_desc:'\u0421\u043e\u0437\u0434\u0430\u0439\u0442\u0435 \u0441\u0442\u0438\u043b\u044c\u043d\u043e\u0435 \u043f\u0440\u0438\u0433\u043b\u0430\u0448\u0435\u043d\u0438\u0435 \u0431\u044b\u0441\u0442\u0440\u0435\u0435, \u0447\u0435\u043c \u0437\u0430\u043a\u0430\u0436\u0435\u0442\u0435 \u043a\u043e\u0444\u0435',noreg_title:'\u0411\u0435\u0437 \u0440\u0435\u0433\u0438\u0441\u0442\u0440\u0430\u0446\u0438\u0438',noreg_desc:'\u041d\u0438 \u0432\u0430\u043c, \u043d\u0438 \u0433\u043e\u0441\u0442\u044f\u043c \u043d\u0435 \u043d\u0443\u0436\u0435\u043d \u0430\u043a\u043a\u0430\u0443\u043d\u0442 \u2014 \u043f\u0440\u043e\u0441\u0442\u043e \u043e\u0442\u043f\u0440\u0430\u0432\u044c\u0442\u0435 \u0441\u0441\u044b\u043b\u043a\u0443',share_title:'WhatsApp & Telegram',share_desc:'\u0414\u0435\u043b\u0438\u0442\u0435\u0441\u044c \u0447\u0435\u0440\u0435\u0437 \u043c\u0435\u0441\u0441\u0435\u043d\u0434\u0436\u0435\u0440\u044b, \u043a\u043e\u0442\u043e\u0440\u044b\u043c\u0438 \u043f\u043e\u043b\u044c\u0437\u0443\u0435\u0442\u0441\u044f \u0432\u0435\u0441\u044c \u0410\u043b\u043c\u0430\u0442\u044b'},
+  cta:{t1:'\u0414\u0430\u0432\u0430\u0439\u0442\u0435 \u0443\u0441\u0442\u0440\u043e\u0438\u043c',t2:'\u0432\u0435\u0447\u0435\u0440\u0438\u043d\u043a\u0443!',desc:'\u0421\u043e\u0437\u0434\u0430\u0439\u0442\u0435 \u043f\u0435\u0440\u0432\u043e\u0435 \u043f\u0440\u0438\u0433\u043b\u0430\u0448\u0435\u043d\u0438\u0435 \u0437\u0430 30 \u0441\u0435\u043a\u0443\u043d\u0434. \u0411\u0435\u0441\u043f\u043b\u0430\u0442\u043d\u043e, \u043d\u0430\u0432\u0441\u0435\u0433\u0434\u0430.',btn:'\u0421\u043e\u0437\u0434\u0430\u0442\u044c \u043f\u0440\u0438\u0433\u043b\u0430\u0448\u0435\u043d\u0438\u0435'},
+  foot:{about:'\u0411\u0435\u0441\u043f\u043b\u0430\u0442\u043d\u0430\u044f \u043f\u043b\u0430\u0442\u0444\u043e\u0440\u043c\u0430 \u0434\u043b\u044f \u0441\u043e\u0437\u0434\u0430\u043d\u0438\u044f \u043f\u0440\u0438\u0433\u043b\u0430\u0448\u0435\u043d\u0438\u0439 \u0432 \u0410\u043b\u043c\u0430\u0442\u044b.',nav:'\u041d\u0430\u0432\u0438\u0433\u0430\u0446\u0438\u044f',contact:'\u041a\u043e\u043d\u0442\u0430\u043a\u0442\u044b',city:'\u0410\u043b\u043c\u0430\u0442\u044b, \u041a\u0430\u0437\u0430\u0445\u0441\u0442\u0430\u043d',rights:'\u0412\u0441\u0435 \u043f\u0440\u0430\u0432\u0430 \u0437\u0430\u0449\u0438\u0449\u0435\u043d\u044b.'},
+  ev:{tab_rsvp:'Гости',tab_comments:'Комментарии',tab_updates:'Обновления',going:'Иду! 🙌',maybe:'Может быть',cant:'Не смогу',your_name:'Ваше имя',rsvp_submit:'Ответить',rsvp_change:'Изменить ответ',rsvp_thanks:'Спасибо за ответ!',guest_list:'Кто идёт',no_guests:'Пока никто не ответил',comment_ph:'Напишите комментарий...',comment_send:'Отправить',comment_name:'Ваше имя',no_comments:'Пока нет комментариев. Будьте первым!',update_ph:'Напишите обновление для всех гостей...',update_send:'Отправить всем',no_updates:'Пока нет обновлений',organizer:'Организатор',share_wa:'WhatsApp',share_tg:'Telegram',share_copy:'Скопировать ссылку',add_cal:'В календарь',show_qr:'QR-код',countdown_days:'дней',countdown_hours:'часов',countdown_min:'минут',countdown_sec:'секунд',countdown_started:'Событие началось!',map_route:'Проложить маршрут',map_click_load:'Нажмите для загрузки',export_csv:'Экспорт гостей',kaspi_title:'Скинуть на подарок',kaspi_btn:'Открыть Kaspi',copied:'Сс\u044b\u043b\u043a\u0430 \u0441\u043a\u043e\u043f\u0438\u0440\u043e\u0432\u0430\u043d\u0430!',host_label:'Организатор',reactions:'Реакции',share_native:'Поделиться',reminder:'Напоминание',reminder_copied:'Напоминание скопировано!',webview_open:'Откройте в браузере для лучшего опыта',pwa_install:'Установить',pwa_desc:'Быстрый доступ к приглашениям'}
+},
+en:{
+  nav:{templates:'Templates',features:'Features',how:'How It Works',why:'Why POSE',create:'Create Invite',back:'Home'},
+  hero:{badge:'Almaty \u00b7 Quick Invites',t1:'Create',t2:'fun invites',t3:'in a minute',desc:'Design a stylish invite, share with friends, track RSVPs. No sign-up needed. Perfect for Almaty.',cta:'Create Invite',perk1:'Free',perk2:'No sign-up',perk3:'Almaty'},
+  demo:{badge:'Birthday',title:'Aizhan\'s Party \ud83c\udf89',date:'June 15, Saturday',time:'7 PM \u2014 until morning',venue:'Sky Lounge, Almaty',address:'77 Al-Farabi Ave',going:'Going! \ud83d\ude4c',maybe:'Maybe',cant:'Can\'t go',guests:'27 going'},
+  occasions:{title:'For every occasion \ud83c\udf8a',desc:'Pick your event type and get a ready template'},
+  tpl:{badge:'TEMPLATES',title:'Beautiful invite templates',desc:'Customize backgrounds, fonts, animations. No paywalls ever.'},
+  feat:{title:'Powerful features, easy events',desc:'Everything you need to organize the perfect event'},
+  how:{title:'How It Works',desc:'Three steps to the perfect event',s1t:'Create',s1d:'Pick a template, add event details',s2t:'Share',s2d:'Send the link via WhatsApp, Telegram, Instagram',s3t:'Celebrate!',s3d:'Track RSVPs, send updates, and share photos'},
+  share:{badge:'SHARE ANYWHERE',title:'Send via any messenger',desc:'WhatsApp, Telegram, Instagram, SMS \u2014 or just copy the link.',copy:'Link'},
+  phone:{badge:'Invitation',title:'Wedding: Dana & Arman \ud83d\udc92',date:'August 24, 6 PM',venue:'Rixos Almaty',addr:'506 Seifullin Ave',msg:'Dear friends! We would be happy to share this day with you.',guestlist:'Who\'s going (42)',comment:'Can\'t wait! \ud83d\ude0d'},
+  create:{title:'Create an Invite',desc:'Fill in the details and share with friends',type:'Event Type',name:'Event Name',name_ph:'Aizhan\'s Party 🎉',date:'Date',time:'Time',location:'Location',loc_ph:'Sky Lounge, 77 Al-Farabi Ave',message:'Message for Guests',msg_ph:'Come celebrate! It\'ll be fun 🎉',style:'Color Theme',btn:'Create & Share',host:'Your Name (Organizer)',host_ph:'Aizhan',poster:'Invite Cover',font:'Title Font',kaspi:'Kaspi for Collection (optional)',kaspi_ph:'Phone number or Kaspi QR link',questions_label:'Questions for Guests (optional)',q_ph:'E.g.: What will you bring?',preview_label:'Preview'},
+  why:{title:'Why POSE?',desc:'Everything you need for the perfect event',fast_title:'2 minutes',fast_desc:'Create a stylish invite faster than ordering coffee',noreg_title:'No sign-up',noreg_desc:'Neither you nor your guests need an account \u2014 just send the link',share_title:'WhatsApp & Telegram',share_desc:'Share through the messengers everyone in Almaty uses'},
+  cta:{t1:'Let\'s throw a',t2:'party!',desc:'Create your first invite in 30 seconds. Free, forever.',btn:'Create Invite'},
+  foot:{about:'Free platform for creating invitations in Almaty.',nav:'Navigation',contact:'Contact',city:'Almaty, Kazakhstan',rights:'All rights reserved.'},
+  ev:{tab_rsvp:'Guests',tab_comments:'Comments',tab_updates:'Updates',going:'Going! 🙌',maybe:'Maybe',cant:'Can\'t go',your_name:'Your Name',rsvp_submit:'RSVP',rsvp_change:'Change RSVP',rsvp_thanks:'Thanks for your RSVP!',guest_list:'Who\'s going',no_guests:'No one has replied yet',comment_ph:'Write a comment...',comment_send:'Send',comment_name:'Your Name',no_comments:'No comments yet. Be the first!',update_ph:'Write an update for all guests...',update_send:'Send to All',no_updates:'No updates yet',organizer:'Organizer',share_wa:'WhatsApp',share_tg:'Telegram',share_copy:'Copy Link',add_cal:'Add to Calendar',show_qr:'QR Code',countdown_days:'days',countdown_hours:'hours',countdown_min:'min',countdown_sec:'sec',countdown_started:'Event has started!',map_route:'Get Directions',map_click_load:'Click to load',export_csv:'Export Guests',kaspi_title:'Chip in for Gift',kaspi_btn:'Open Kaspi',copied:'Link copied!',host_label:'Organizer',reactions:'Reactions',share_native:'Share',reminder:'Reminder',reminder_copied:'Reminder copied!',webview_open:'Open in browser for best experience',pwa_install:'Install',pwa_desc:'Quick access to invitations'}
+},
+kz:{
+  nav:{templates:'\u0428\u0430\u0431\u043b\u043e\u043d\u0434\u0430\u0440',features:'\u041c\u04af\u043c\u043a\u0456\u043d\u0434\u0456\u043a\u0442\u0435\u0440',how:'\u049a\u0430\u043b\u0430\u0439 \u0436\u04b1\u043c\u044b\u0441 \u0436\u0430\u0441\u0430\u0439\u0434\u044b',why:'\u041d\u0435\u0433\u0435 POSE',create:'\u0428\u0430\u049b\u044b\u0440\u0443 \u0436\u0430\u0441\u0430\u0443',back:'\u0411\u0430\u0441\u0442\u044b'},
+  hero:{badge:'\u0410\u043b\u043c\u0430\u0442\u044b \u00b7 \u0416\u044b\u043b\u0434\u0430\u043c \u0448\u0430\u049b\u044b\u0440\u0443\u043b\u0430\u0440',t1:'\u0416\u0430\u0440\u049b\u044b\u043d',t2:'\u0448\u0430\u049b\u044b\u0440\u0443\u043b\u0430\u0440',t3:'\u043c\u0438\u043d\u0443\u0442\u0442\u0430 \u0436\u0430\u0441\u0430\u04a3\u044b\u0437',desc:'\u0421\u0442\u0438\u043b\u044c\u0434\u0456 \u0448\u0430\u049b\u044b\u0440\u0443 \u0436\u0430\u0441\u0430\u04a3\u044b\u0437, \u0434\u043e\u0441\u0442\u0430\u0440\u044b\u04a3\u044b\u0437\u0493\u0430 \u0436\u0456\u0431\u0435\u0440\u0456\u04a3\u0456\u0437. \u0410\u043b\u043c\u0430\u0442\u044b \u04af\u0448\u0456\u043d.',cta:'\u0428\u0430\u049b\u044b\u0440\u0443 \u0436\u0430\u0441\u0430\u0443',perk1:'\u0422\u0435\u0433\u0456\u043d',perk2:'\u0422\u0456\u0440\u043a\u0435\u043b\u0443\u0441\u0456\u0437',perk3:'\u0410\u043b\u043c\u0430\u0442\u044b'},
+  demo:{badge:'\u0422\u0443\u0493\u0430\u043d \u043a\u04af\u043d',title:'\u0410\u0439\u0436\u0430\u043d \u043a\u0435\u0448\u0456 \ud83c\udf89',date:'15 \u043c\u0430\u0443\u0441\u044b\u043c',time:'19:00',venue:'Sky Lounge',address:'\u04d8\u043b-\u0424\u0430\u0440\u0430\u0431\u0438, 77',going:'\u0411\u0430\u0440\u0430\u043c\u044b\u043d!',maybe:'\u041c\u04af\u043c\u043a\u0456\u043d',cant:'\u0411\u0430\u0440\u0430 \u0430\u043b\u043c\u0430\u0439\u043c\u044b\u043d',guests:'27 \u0431\u0430\u0440\u0430\u0434\u044b'},
+  occasions:{title:'\u04d8\u0440 \u043c\u0435\u0440\u0435\u043a\u0435 \u04af\u0448\u0456\u043d \ud83c\udf8a',desc:'\u0406\u0441-\u0448\u0430\u0440\u0430 \u0442\u04af\u0440\u0456\u043d \u0442\u0430\u04a3\u0434\u0430\u04a3\u044b\u0437'},
+  tpl:{badge:'\u0428\u0410\u0411\u041b\u041e\u041d\u0414\u0410\u0420',title:'\u0421\u0442\u0438\u043b\u044c\u0434\u0456 \u0448\u0430\u049b\u044b\u0440\u0443 \u0448\u0430\u0431\u043b\u043e\u043d\u0434\u0430\u0440\u044b',desc:'\u0424\u043e\u043d, \u049b\u0430\u0440\u0456\u043f, \u0430\u043d\u0438\u043c\u0430\u0446\u0438\u044f\u043d\u044b \u0431\u0430\u043f\u0442\u0430\u04a3\u044b\u0437.'},
+  feat:{title:'\u049a\u0443\u0430\u0442\u0442\u044b \u0444\u0443\u043d\u043a\u0446\u0438\u044f\u043b\u0430\u0440',desc:'\u0406\u0434\u0435\u0430\u043b\u0434\u044b \u0456\u0441-\u0448\u0430\u0440\u0430 \u04b1\u0439\u044b\u043c\u0434\u0430\u0441\u0442\u044b\u0440\u0443 \u04af\u0448\u0456\u043d'},
+  how:{title:'\u049a\u0430\u043b\u0430\u0439 \u0436\u04b1\u043c\u044b\u0441 \u0436\u0430\u0441\u0430\u0439\u0434\u044b',desc:'\u04ae\u0448 \u049b\u0430\u0434\u0430\u043c',s1t:'\u0416\u0430\u0441\u0430\u04a3\u044b\u0437',s1d:'\u0428\u0430\u0431\u043b\u043e\u043d \u0442\u0430\u04a3\u0434\u0430\u04a3\u044b\u0437',s2t:'\u0416\u0456\u0431\u0435\u0440\u0456\u04a3\u0456\u0437',s2d:'WhatsApp, Telegram \u0430\u0440\u049b\u044b\u043b\u044b \u0431\u04e9\u043b\u0456\u0441\u0456\u04a3\u0456\u0437',s3t:'\u041c\u0435\u0440\u0435\u043a\u0435\u043b\u0435\u04a3\u0456\u0437!',s3d:'\u0416\u0430\u0443\u0430\u043f\u0442\u0430\u0440\u0434\u044b \u0431\u0430\u049b\u044b\u043b\u0430\u04a3\u044b\u0437'},
+  share:{badge:'\u049a\u0410\u0419\u0414\u0410 \u0411\u041e\u041b\u0421\u0410 \u0416\u0406\u0411\u0415\u0420\u0406\u04a2\u0406\u0417',title:'\u041c\u0435\u0441\u0441\u0435\u043d\u0434\u0436\u0435\u0440 \u0430\u0440\u049b\u044b\u043b\u044b \u0431\u04e9\u043b\u0456\u0441\u0456\u04a3\u0456\u0437',desc:'WhatsApp, Telegram, Instagram \u0430\u0440\u049b\u044b\u043b\u044b.',copy:'\u0421\u0456\u043b\u0442\u0435\u043c\u0435'},
+  phone:{badge:'\u0428\u0430\u049b\u044b\u0440\u0443',title:'\u0422\u043e\u0439: \u0414\u0430\u043d\u0430 & \u0410\u0440\u043c\u0430\u043d',date:'24 \u0442\u0430\u043c\u044b\u0437',venue:'Rixos Almaty',addr:'\u0421\u0435\u0439\u0444\u0443\u043b\u043b\u0438\u043d, 506',msg:'\u049a\u04b1\u0440\u043c\u0435\u0442\u0442\u0456 \u0434\u043e\u0441\u0442\u0430\u0440!',guestlist:'\u041a\u0456\u043c \u0431\u0430\u0440\u0430\u0434\u044b (42)',comment:'\u0416\u04af\u0434\u0435 \u043a\u04af\u0442\u0435\u043c\u0456\u043d!'},
+  create:{title:'Шақыру жасаңыз',desc:'Мәліметтерді толтырыңыз',type:'Іс-шара түрі',name:'Атауы',name_ph:'Айжан кеші',date:'Күн',time:'Уақыт',location:'Орын',loc_ph:'Sky Lounge',message:'Хабар',msg_ph:'Келіңіздер!',style:'Түс тақырыбы',btn:'Жасау және бөлісу',host:'Атыңыз (ұйымдастырушы)',host_ph:'Айжан',poster:'Шақыру мұқабасы',font:'Тақырып қаріпі',kaspi:'Kaspi жинау (міндетті емес)',kaspi_ph:'Телефон нөмірі немесе Kaspi QR сілтеме',questions_label:'Қонақтарға сұрақтар (міндетті емес)',q_ph:'Мысалы: Не әкелесіз?',preview_label:'Алдын ала қарау'},
+  why:{title:'\u041d\u0435\u0433\u0435 POSE?',desc:'\u0406\u0434\u0435\u0430\u043b\u0434\u044b \u0456\u0441-\u0448\u0430\u0440\u0430 \u04af\u0448\u0456\u043d \u0431\u0430\u0440\u043b\u044b\u0493\u044b',fast_title:'2 \u043c\u0438\u043d\u0443\u0442',fast_desc:'\u041a\u043e\u0444\u0435\u0433\u0435 \u0442\u0430\u043f\u0441\u044b\u0440\u044b\u0441 \u0431\u0435\u0440\u0433\u0435\u043d\u0448\u0435 \u0436\u044b\u043b\u0434\u0430\u043c\u0440\u0430\u049b \u0448\u0430\u049b\u044b\u0440\u0443 \u0436\u0430\u0441\u0430\u04a3\u044b\u0437',noreg_title:'\u0422\u0456\u0440\u043a\u0435\u043b\u0443\u0441\u0456\u0437',noreg_desc:'\u0421\u0456\u0437\u0433\u0435 \u0434\u0435 \u049b\u043e\u043d\u0430\u049b\u0442\u0430\u0440\u0493\u0430 \u0434\u0430 \u0430\u043a\u043a\u0430\u0443\u043d\u0442 \u049b\u0430\u0436\u0435\u0442 \u0435\u043c\u0435\u0441',share_title:'WhatsApp & Telegram',share_desc:'\u0410\u043b\u043c\u0430\u0442\u044b\u0434\u0430 \u0431\u0430\u0440\u043b\u044b\u0493\u044b \u049b\u043e\u043b\u0434\u0430\u043d\u0430\u0442\u044b\u043d \u043c\u0435\u0441\u0441\u0435\u043d\u0434\u0436\u0435\u0440\u043b\u0435\u0440 \u0430\u0440\u049b\u044b\u043b\u044b'},
+  cta:{t1:'\u041a\u0435\u0448 \u04b1\u0439\u044b\u043c\u0434\u0430\u0441\u0442\u044b\u0440\u0430\u0439\u044b\u049b',t2:'\u043c\u0435\u0440\u0435\u043a\u0435!',desc:'30 \u0441\u0435\u043a\u0443\u043d\u0434\u0442\u0430 \u0448\u0430\u049b\u044b\u0440\u0443 \u0436\u0430\u0441\u0430\u04a3\u044b\u0437.',btn:'\u0428\u0430\u049b\u044b\u0440\u0443 \u0436\u0430\u0441\u0430\u0443'},
+  foot:{about:'\u0410\u043b\u043c\u0430\u0442\u044b\u0434\u0430 \u0448\u0430\u049b\u044b\u0440\u0443\u043b\u0430\u0440 \u0436\u0430\u0441\u0430\u0443 \u04af\u0448\u0456\u043d \u0442\u0435\u0433\u0456\u043d \u043f\u043b\u0430\u0442\u0444\u043e\u0440\u043c\u0430.',nav:'\u041d\u0430\u0432\u0438\u0433\u0430\u0446\u0438\u044f',contact:'\u0411\u0430\u0439\u043b\u0430\u043d\u044b\u0441',city:'\u0410\u043b\u043c\u0430\u0442\u044b, \u049a\u0430\u0437\u0430\u049b\u0441\u0442\u0430\u043d',rights:'\u0411\u0430\u0440\u043b\u044b\u049b \u049b\u04b1\u049b\u044b\u049b\u0442\u0430\u0440 \u049b\u043e\u0440\u0493\u0430\u043b\u0493\u0430\u043d.'},
+  ev:{tab_rsvp:'Қонақтар',tab_comments:'Пікірлер',tab_updates:'Жаңартулар',going:'Барамын! 🙌',maybe:'Мүмкін',cant:'Бара алмаймын',your_name:'Атыңыз',rsvp_submit:'Жауап',rsvp_change:'Жауапты өзгерту',rsvp_thanks:'Жауап үшін рахмет!',guest_list:'Кім барады',no_guests:'Әлі ешкім жауап бермеді',comment_ph:'Пікір жазыңыз...',comment_send:'Жіберу',comment_name:'Атыңыз',no_comments:'Пікірлер жоқ. Бірінші болыңыз!',update_ph:'Барлық қонақтарға жаңарту...',update_send:'Барлығына жіберу',no_updates:'Жаңартулар жоқ',organizer:'Ұйымдастырушы',share_wa:'WhatsApp',share_tg:'Telegram',share_copy:'Сілтемені көшіру',add_cal:'Күнтізбеге',show_qr:'QR-код',countdown_days:'күн',countdown_hours:'сағат',countdown_min:'мин',countdown_sec:'сек',countdown_started:'Іс-шара басталды!',map_route:'Бағыт жасау',map_click_load:'Жүктеу үшін басыңыз',export_csv:'Қонақтарды экспорттау',kaspi_title:'Сыйлыққа жинау',kaspi_btn:'Kaspi ашу',copied:'Сілтеме көшірілді!',host_label:'Ұйымдастырушы',reactions:'Реакциялар',share_native:'Бөлісу',reminder:'Еске салу',reminder_copied:'Еске салу көшірілді!',webview_open:'Жақсы тәжірибе үшін браузерде ашыңыз',pwa_install:'Орнату',pwa_desc:'Шақыруларға жылдам қол жеткізу'}
+}
+};
+
+// ===== DATA =====
+var eventTypes=[
+  {id:'birthday',emoji:'\ud83c\udf82',name:{ru:'\u0414\u0435\u043d\u044c \u0440\u043e\u0436\u0434\u0435\u043d\u0438\u044f',en:'Birthday',kz:'\u0422\u0443\u0493\u0430\u043d \u043a\u04af\u043d'}},
+  {id:'wedding',emoji:'\ud83d\udc8d',name:{ru:'\u0421\u0432\u0430\u0434\u044c\u0431\u0430',en:'Wedding',kz:'\u0422\u043e\u0439'}},
+  {id:'babyshower',emoji:'\ud83c\udf7c',name:{ru:'Baby Shower',en:'Baby Shower',kz:'Baby Shower'}},
+  {id:'party',emoji:'\ud83c\udf89',name:{ru:'\u0412\u0435\u0447\u0435\u0440\u0438\u043d\u043a\u0430',en:'Party',kz:'\u041a\u0435\u0448'}},
+  {id:'dinner',emoji:'\ud83c\udf7d\ufe0f',name:{ru:'\u0423\u0436\u0438\u043d',en:'Dinner',kz:'\u041a\u0435\u0448\u043a\u0456 \u0430\u0441'}},
+  {id:'corporate',emoji:'\ud83d\udcbc',name:{ru:'\u041a\u043e\u0440\u043f\u043e\u0440\u0430\u0442\u0438\u0432',en:'Corporate',kz:'\u041a\u043e\u0440\u043f\u043e\u0440\u0430\u0442\u0438\u0432'}},
+  {id:'graduation',emoji:'\ud83c\udf93',name:{ru:'\u0412\u044b\u043f\u0443\u0441\u043a\u043d\u043e\u0439',en:'Graduation',kz:'\u0411\u0456\u0442\u0456\u0440\u0443'}},
+  {id:'housewarming',emoji:'\ud83c\udfe0',name:{ru:'\u041d\u043e\u0432\u043e\u0441\u0435\u043b\u044c\u0435',en:'Housewarming',kz:'\u04ae\u0439 \u0442\u043e\u0439\u044b'}}
+];
+
+var templateData=[
+  {type:'birthday',img:'https://images.unsplash.com/photo-1530103862676-de8c9debad1d?w=400&h=250&fit=crop',title:{ru:'\u0414\u0435\u043d\u044c \u0440\u043e\u0436\u0434\u0435\u043d\u0438\u044f',en:'Birthday Party',kz:'\u0422\u0443\u0493\u0430\u043d \u043a\u04af\u043d'}},
+  {type:'wedding',img:'https://images.unsplash.com/photo-1519741497674-611481863552?w=400&h=250&fit=crop',title:{ru:'\u0421\u0432\u0430\u0434\u044c\u0431\u0430',en:'Wedding',kz:'\u0422\u043e\u0439'}},
+  {type:'party',img:'https://images.unsplash.com/photo-1492684223066-81342ee5ff30?w=400&h=250&fit=crop',title:{ru:'\u0412\u0435\u0447\u0435\u0440\u0438\u043d\u043a\u0430',en:'Party',kz:'\u041a\u0435\u0448'}},
+  {type:'babyshower',img:'https://images.unsplash.com/photo-1544776193-352d25ca82cd?w=400&h=250&fit=crop',title:{ru:'Baby Shower',en:'Baby Shower',kz:'Baby Shower'}},
+  {type:'dinner',img:'https://images.unsplash.com/photo-1414235077428-338989a2e8c0?w=400&h=250&fit=crop',title:{ru:'\u0423\u0436\u0438\u043d',en:'Dinner Party',kz:'\u041a\u0435\u0448\u043a\u0456 \u0430\u0441'}},
+  {type:'corporate',img:'https://images.unsplash.com/photo-1540575467063-178a50c2df87?w=400&h=250&fit=crop',title:{ru:'\u041a\u043e\u0440\u043f\u043e\u0440\u0430\u0442\u0438\u0432',en:'Corporate',kz:'\u041a\u043e\u0440\u043f\u043e\u0440\u0430\u0442\u0438\u0432'}}
+];
+
+var featureData=[
+  {icon:'eye',color:'brand',title:{ru:'\u0421\u043f\u0438\u0441\u043e\u043a \u0433\u043e\u0441\u0442\u0435\u0439',en:'Guest List',kz:'\u049a\u043e\u043d\u0430\u049b \u0442\u0456\u0437\u0456\u043c\u0456'},desc:{ru:'\u0421\u043c\u043e\u0442\u0440\u0438\u0442\u0435, \u043a\u0442\u043e \u0438\u0434\u0451\u0442 \u2014 \u043e\u0441\u0442\u0430\u0432\u043b\u044f\u0439\u0442\u0435 \u043a\u043e\u043c\u043c\u0435\u043d\u0442\u0430\u0440\u0438\u0438 \u0438 \u0440\u0435\u0430\u043a\u0446\u0438\u0438',en:'See who\'s going \u2014 leave comments and reactions',kz:'\u041a\u0456\u043c \u0431\u0430\u0440\u0430\u0442\u044b\u043d\u044b\u043d \u043a\u04e9\u0440\u0456\u04a3\u0456\u0437'}},
+  {icon:'message-circle',color:'pink',title:{ru:'\u0420\u0430\u0441\u0441\u044b\u043b\u043a\u0430 \u043e\u0431\u043d\u043e\u0432\u043b\u0435\u043d\u0438\u0439',en:'Text Blast',kz:'\u0416\u0430\u04a3\u0430\u0440\u0442\u0443 \u0442\u0430\u0440\u0430\u0442\u0443'},desc:{ru:'\u041e\u0442\u043f\u0440\u0430\u0432\u044c\u0442\u0435 \u0441\u043e\u043e\u0431\u0449\u0435\u043d\u0438\u0435 \u0432\u0441\u0435\u043c \u0433\u043e\u0441\u0442\u044f\u043c \u0441\u0440\u0430\u0437\u0443',en:'Send a message to everyone at once',kz:'\u0411\u0430\u0440\u043b\u044b\u0493\u044b\u043d\u0430 \u0445\u0430\u0431\u0430\u0440 \u0436\u0456\u0431\u0435\u0440\u0456\u04a3\u0456\u0437'}},
+  {icon:'camera',color:'accent',title:{ru:'\u0424\u043e\u0442\u043e\u0430\u043b\u044c\u0431\u043e\u043c',en:'Photo Album',kz:'\u0424\u043e\u0442\u043e\u0430\u043b\u044c\u0431\u043e\u043c'},desc:{ru:'\u041e\u0431\u0449\u0438\u0439 \u0430\u043b\u044c\u0431\u043e\u043c \u2014 \u0433\u043e\u0441\u0442\u0438 \u0442\u043e\u0436\u0435 \u043c\u043e\u0433\u0443\u0442 \u0434\u043e\u0431\u0430\u0432\u043b\u044f\u0442\u044c \u0444\u043e\u0442\u043e',en:'Shared album \u2014 guests can add photos too',kz:'\u041e\u0440\u0442\u0430\u049b \u0430\u043b\u044c\u0431\u043e\u043c'}},
+  {icon:'calendar-check',color:'teal',title:{ru:'\u041e\u043f\u0440\u043e\u0441 \u0434\u0430\u0442\u044b',en:'Date Poll',kz:'\u041a\u04af\u043d \u0441\u0430\u0443\u0430\u043b\u043d\u0430\u043c\u0430\u0441\u044b'},desc:{ru:'\u041e\u043f\u0440\u043e\u0441\u0438\u0442\u0435 \u0433\u043e\u0441\u0442\u0435\u0439 \u043f\u0435\u0440\u0435\u0434 \u0432\u044b\u0431\u043e\u0440\u043e\u043c \u0434\u0430\u0442\u044b',en:'Poll your guests before selecting a date',kz:'\u049a\u043e\u043d\u0430\u049b\u0442\u0430\u0440\u0434\u044b \u0441\u04b1\u0440\u0430\u04a3\u044b\u0437'}},
+  {icon:'help-circle',color:'brand',title:{ru:'\u0412\u043e\u043f\u0440\u043e\u0441\u044b \u0433\u043e\u0441\u0442\u044f\u043c',en:'Guest Questions',kz:'\u0421\u04b1\u0440\u0430\u049b\u0442\u0430\u0440'},desc:{ru:'\u0421\u043f\u0440\u043e\u0441\u0438\u0442\u0435 \u043f\u0440\u043e \u0434\u0438\u0435\u0442\u044b, \u043f\u043b\u0435\u0439\u043b\u0438\u0441\u0442\u044b \u0438\u043b\u0438 \u0442\u0435\u043c\u044b',en:'Ask about diets, playlists, or themes',kz:'\u0414\u0438\u0435\u0442\u0430, \u043f\u043b\u0435\u0439\u043b\u0438\u0441\u0442 \u0442\u0443\u0440\u0430\u043b\u044b \u0441\u04b1\u0440\u0430\u04a3\u044b\u0437'}},
+  {icon:'wallet',color:'pink',title:{ru:'\u0421\u0431\u043e\u0440 \u0441\u0440\u0435\u0434\u0441\u0442\u0432',en:'Collect Money',kz:'\u0410\u049b\u0448\u0430 \u0436\u0438\u043d\u0430\u0443'},desc:{ru:'\u0427\u0435\u0440\u0435\u0437 Kaspi, Halyk \u0438\u043b\u0438 \u043d\u0430\u043b\u0438\u0447\u043d\u044b\u043c\u0438',en:'Via Kaspi, Halyk, or cash',kz:'Kaspi, Halyk \u0430\u0440\u049b\u044b\u043b\u044b'}}
+];
+
+
+
+var REACTIONS=['\u2764\ufe0f','\ud83d\ude02','\ud83d\udd25','\ud83c\udf89','\ud83d\ude4c','\ud83d\ude0d'];
+var AVATAR_COLORS=['bg-pink-500','bg-teal-500','bg-amber-500','bg-blue-500','bg-brand-500','bg-emerald-500','bg-rose-500','bg-indigo-500','bg-cyan-500','bg-orange-500'];
+function avatarHtml(name,size,textSize){var initial=(name||'?').charAt(0).toUpperCase();var ci=0;for(var i=0;i<name.length;i++)ci+=name.charCodeAt(i);var col=AVATAR_COLORS[ci%AVATAR_COLORS.length];return '<div class="w-'+size+' h-'+size+' rounded-full '+col+' flex items-center justify-center text-['+textSize+'] font-bold text-white flex-shrink-0">'+initial+'</div>';}
+
+var POSTERS=[
+  {id:'none',label:'Без обложки',bg:''},
+  {id:'confetti',label:'Конфетти',bg:'linear-gradient(135deg,#667eea 0%,#764ba2 100%)'},
+  {id:'sunset_glow',label:'Закат',bg:'linear-gradient(135deg,#f093fb 0%,#f5576c 100%)'},
+  {id:'ocean_breeze',label:'Океан',bg:'linear-gradient(135deg,#4facfe 0%,#00f2fe 100%)'},
+  {id:'forest_mist',label:'Лес',bg:'linear-gradient(135deg,#43e97b 0%,#38f9d7 100%)'},
+  {id:'royal_purple',label:'Пурпур',bg:'linear-gradient(135deg,#7c3aed 0%,#c026d3 100%)'},
+  {id:'golden_hour',label:'Золото',bg:'linear-gradient(135deg,#f6d365 0%,#fda085 100%)'},
+  {id:'midnight',label:'Полночь',bg:'linear-gradient(135deg,#0c0c1d 0%,#1a1a3e 50%,#2d1b69 100%)'},
+  {id:'cherry',label:'Вишня',bg:'linear-gradient(135deg,#f5515f 0%,#a1051d 100%)'},
+  {id:'aurora',label:'Аврора',bg:'linear-gradient(135deg,#00c6fb 0%,#005bea 50%,#a855f7 100%)'},
+  {id:'peach',label:'Персик',bg:'linear-gradient(135deg,#ff9a56 0%,#ff6a88 100%)'},
+  {id:'lavender',label:'Лаванда',bg:'linear-gradient(135deg,#a78bfa 0%,#818cf8 100%)'},
+  {id:'neon',label:'Неон',bg:'linear-gradient(135deg,#f857a6 0%,#ff5858 50%,#ffc371 100%)'},
+  {id:'space',label:'Космос',bg:'linear-gradient(135deg,#0f0c29 0%,#302b63 50%,#24243e 100%)'},
+  {id:'tropical',label:'Тропики',bg:'linear-gradient(135deg,#11998e 0%,#38ef7d 100%)'},
+  {id:'cotton_candy',label:'Сладкая вата',bg:'linear-gradient(135deg,#c084fc 0%,#60a5fa 100%)'},
+  {id:'fire',label:'Огонь',bg:'linear-gradient(135deg,#f12711 0%,#f5af19 100%)'},
+  {id:'elegance',label:'Элегантность',bg:'linear-gradient(135deg,#2c3e50 0%,#4ca1af 100%)'},
+  {id:'rose_gold',label:'Розовое золото',bg:'linear-gradient(135deg,#e11d48 0%,#f59e0b 100%)'},
+  {id:'sky',label:'Небо',bg:'linear-gradient(135deg,#89f7fe 0%,#66a6ff 100%)'}
+];
+
+var FONTS=[
+  {id:'grotesk',label:'Space Grotesk',cls:'font-grotesk'},
+  {id:'playfair',label:'Playfair',cls:'font-playfair'},
+  {id:'caveat',label:'Caveat',cls:'font-caveat'},
+  {id:'unbounded',label:'Unbounded',cls:'font-unbounded'},
+  {id:'montserrat',label:'Montserrat',cls:'font-montserrat'},
+  {id:'pacifico',label:'Pacifico',cls:'font-pacifico'}
+];
+
+var guestQuestions=[];
+
+// ===== STATE =====
+var lang='ru',selectedEventType=null,selectedStyle='gradient',selectedPoster='none',selectedFont='grotesk',currentView='landing',currentEventId=null,countdownInterval=null;
+var STYLES={gradient:'from-brand-500 to-pink-500',ocean:'from-teal-400 to-blue-500',sunset:'from-amber-400 to-orange-500',forest:'from-emerald-400 to-teal-600',dark:'from-slate-700 to-slate-900',rose:'from-rose-400 to-red-500'};
+
+// ===== CORE =====
+function t(k){var ks=k.split('.'),v=L[lang];for(var i=0;i<ks.length;i++){v=v&&v[ks[i]];}return v||k;}
+function toast(msg,type){var c=document.getElementById('toast-box');var d=document.createElement('div');var cl=type==='success'?'bg-green-50 border-green-200 text-green-700':type==='error'?'bg-red-50 border-red-200 text-red-600':'bg-brand-50 border-brand-200 text-brand-700';d.className='animate-fade-up '+cl+' border-2 px-5 py-3 rounded-2xl text-sm font-medium shadow-xl max-w-xs';d.textContent=msg;c.appendChild(d);setTimeout(function(){d.style.opacity='0';d.style.transition='opacity .3s';setTimeout(function(){d.remove();},300);},3000);}
+function confetti(){for(var i=0;i<20;i++){var el=document.createElement('div');el.className='confetti-piece';el.style.left=Math.random()*100+'vw';el.style.top='50%';el.style.fontSize=(12+Math.random()*16)+'px';el.textContent=['\u2728','\ud83c\udf89','\ud83c\udf8a','\u2b50','\ud83d\udcab'][Math.floor(Math.random()*5)];el.style.animationDuration=(1+Math.random())+'s';el.style.animationDelay=(Math.random()*0.5)+'s';document.body.appendChild(el);setTimeout(function(){el.remove();},2500);}}
+
+// ===== LANGUAGE =====
+function setLang(l){lang=l;document.documentElement.lang=l==='kz'?'kk':l;document.querySelectorAll('.lang-btn').forEach(function(b){b.classList.toggle('active',b.dataset.lang===l);});document.querySelectorAll('[data-i18n]').forEach(function(el){var v=t(el.dataset.i18n);if(v)el.textContent=v;});updatePlaceholders();renderAll();}
+function updatePlaceholders(){document.querySelectorAll('[data-placeholder-i18n]').forEach(function(el){var v=t(el.getAttribute('data-placeholder-i18n'));if(v)el.placeholder=v;});}
+
+// ===== MOBILE MENU =====
+function openMobile(){var o=document.getElementById('mobile-menu-overlay'),bk=document.getElementById('mobile-menu-backdrop'),pn=document.getElementById('mobile-panel');o.classList.remove('pointer-events-none');bk.classList.remove('opacity-0','pointer-events-none');bk.classList.add('opacity-100','pointer-events-auto');pn.style.transform='translateX(0)';document.body.style.overflow='hidden';}
+function closeMobile(){var o=document.getElementById('mobile-menu-overlay'),bk=document.getElementById('mobile-menu-backdrop'),pn=document.getElementById('mobile-panel');bk.classList.add('opacity-0','pointer-events-none');bk.classList.remove('opacity-100','pointer-events-auto');pn.style.transform='translateX(100%)';document.body.style.overflow='';setTimeout(function(){o.classList.add('pointer-events-none');},350);}
+
+// ===== NAVIGATION =====
+function navigateTo(view,eventId){
+  currentView=view;currentEventId=eventId||null;
+  document.querySelectorAll('.view').forEach(function(v){v.classList.remove('active');});
+  document.getElementById('view-'+view).classList.add('active');
+  if(view==='landing'){document.getElementById('nav-links-landing').style.display='';document.getElementById('nav-links-event').style.display='none';document.getElementById('nav-create-btn').style.display='';window.location.hash='';}
+  else if(view==='event'){document.getElementById('nav-links-landing').style.display='none';document.getElementById('nav-links-event').style.display='';document.getElementById('nav-create-btn').style.display='none';window.location.hash='event/'+eventId;renderEventPage(eventId);}
+  window.scrollTo(0,0);
+}
+
+// ===== LANDING RENDERS =====
+function renderEventTypes(){var c=document.getElementById('event-types-bar');if(!c)return;var html='';for(var i=0;i<eventTypes.length;i++){var et=eventTypes[i],active=selectedEventType===et.id?' active':'';html+='<button class="event-type-chip inline-flex items-center gap-2 px-5 py-3 rounded-2xl border-2 border-gray-100 text-sm font-medium'+active+'" data-eid="'+et.id+'"><span class="text-lg">'+et.emoji+'</span><span>'+et.name[lang]+'</span></button>';}c.innerHTML=html;c.querySelectorAll('.event-type-chip').forEach(function(el){el.addEventListener('click',function(){selectedEventType=selectedEventType===this.dataset.eid?null:this.dataset.eid;renderEventTypes();renderCreateTypes();});});}
+function renderTemplates(){var grid=document.getElementById('templates-grid');if(!grid)return;var html='',filtered=selectedEventType?templateData.filter(function(t){return t.type===selectedEventType;}):templateData;if(!filtered.length)filtered=templateData;for(var i=0;i<filtered.length;i++){var tpl=filtered[i];html+='<a href="#create" class="template-card rounded-3xl overflow-hidden border-2 border-gray-100 reveal reveal-d'+(i%3+1)+'"><div class="aspect-[16/10] overflow-hidden relative"><img src="'+tpl.img+'" alt="" class="w-full h-full object-cover transition-transform duration-500 hover:scale-110"><div class="absolute inset-0 bg-gradient-to-t from-black/50 to-transparent"></div><div class="absolute bottom-4 left-5"><span class="text-white text-lg font-display font-bold">'+tpl.title[lang]+'</span></div></div><div class="p-4 flex items-center justify-between"><span class="text-xs font-medium text-gray-500">'+t('tpl.badge')+'</span><span class="text-xs font-semibold text-brand-600 flex items-center gap-1"><i data-lucide="arrow-right" class="w-3.5 h-3.5"></i></span></div></a>';}grid.innerHTML=html;lu();observeReveals();}
+function renderFeatures(){var grid=document.getElementById('features-grid');if(!grid)return;var html='';for(var i=0;i<featureData.length;i++){var f=featureData[i],c=f.color;html+='<div class="feature-card-v2 reveal reveal-d'+(i%3+1)+'"><div class="feature-icon w-16 h-16 rounded-2xl bg-gradient-to-br from-'+c+'-400 to-'+c+'-600 flex items-center justify-center mb-5 shadow-lg shadow-'+c+'-200/40"><i data-lucide="'+f.icon+'" class="w-7 h-7 text-white"></i></div><h3 class="font-display text-lg font-bold mb-2">'+f.title[lang]+'</h3><p class="text-gray-500 text-sm leading-relaxed">'+f.desc[lang]+'</p></div>';}grid.innerHTML=html;lu();observeReveals();}
+
+function renderCreateTypes(){var c=document.getElementById('create-event-types');if(!c)return;var html='';for(var i=0;i<eventTypes.length;i++){var et=eventTypes[i],active=selectedEventType===et.id?' active':'';html+='<div class="event-type-chip inline-flex items-center gap-1 px-3 py-2 rounded-full border-2 border-gray-100 whitespace-nowrap'+active+'" data-eid="'+et.id+'" style="font-size:13px"><span>'+et.emoji+'</span><span class="font-medium">'+et.name[lang]+'</span></div>';}c.innerHTML=html;c.querySelectorAll('.event-type-chip').forEach(function(el){el.addEventListener('click',function(){selectedEventType=selectedEventType===this.dataset.eid?null:this.dataset.eid;renderCreateTypes();renderEventTypes();updateLivePreview();});});}
+
+// ===== POSTER / FONT / QUESTIONS PICKERS =====
+function renderPosterPicker(){
+  var c=document.getElementById('poster-picks');if(!c)return;
+  var html='';
+  POSTERS.forEach(function(p){
+    var active=selectedPoster===p.id?' active':'';
+    var bgStyle=p.bg?'background:'+p.bg:'background:#f3f4f6';
+    html+='<div class="poster-pick'+active+'" data-poster="'+p.id+'" style="'+bgStyle+';width:130px;min-height:82px;display:flex;align-items:center;justify-content:center"><span style="font-size:10px;font-weight:700;'+(p.bg?'color:#fff':'color:#9ca3af')+'">'+p.label+'</span></div>';
+  });
+  c.innerHTML=html;
+  c.querySelectorAll('.poster-pick').forEach(function(el){
+    el.addEventListener('click',function(){selectedPoster=this.dataset.poster;renderPosterPicker();updateLivePreview();});
+  });
+}
+
+function renderFontPicker(){
+  var c=document.getElementById('font-picks');if(!c)return;
+  var html='';
+  FONTS.forEach(function(f){
+    var active=selectedFont===f.id?' active':'';
+    html+='<div class="font-pick'+active+' '+f.cls+'" data-font="'+f.id+'">'+f.label+'</div>';
+  });
+  c.innerHTML=html;
+  c.querySelectorAll('.font-pick').forEach(function(el){
+    el.addEventListener('click',function(){selectedFont=this.dataset.font;renderFontPicker();updateLivePreview();});
+  });
+}
+
+function addQuestion(){
+  var inp=document.getElementById('new-question');if(!inp)return;
+  var q=inp.value.trim();if(!q)return;
+  guestQuestions.push(q);inp.value='';renderQuestionsList();
+}
+function removeQuestion(idx){guestQuestions.splice(idx,1);renderQuestionsList();}
+function renderQuestionsList(){
+  var c=document.getElementById('questions-list');if(!c)return;
+  var html='';
+  guestQuestions.forEach(function(q,i){
+    html+='<div class="flex items-center gap-2 bg-gray-50 rounded-xl px-3 py-2"><span class="flex-1 text-sm">'+esc(q)+'</span><button type="button" onclick="removeQuestion('+i+')" class="text-red-400 hover:text-red-600 text-lg font-bold">&times;</button></div>';
+  });
+  c.innerHTML=html;
+}
+
+function updateLivePreview(){
+  var h=document.getElementById('preview-header');
+  var tEl=document.getElementById('preview-title');
+  var dEl=document.getElementById('preview-details');
+  var pEl=document.getElementById('preview-type');
+  if(!h)return;
+  var name=document.getElementById('ev-name');
+  var date=document.getElementById('ev-date');
+  var time=document.getElementById('ev-time');
+  var loc=document.getElementById('ev-location');
+  if(tEl)tEl.textContent=(name&&name.value.trim())||t('create.name_ph')||'Ваше событие';
+  var poster=POSTERS.find(function(x){return x.id===selectedPoster;});
+  if(poster&&poster.bg)h.style.background=poster.bg;
+  else h.style.background='linear-gradient(135deg,#a855f7,#ec4899)';
+  var font=FONTS.find(function(x){return x.id===selectedFont;});
+  if(font&&tEl){tEl.className='text-2xl font-bold leading-tight '+font.cls;}
+  var details=[];
+  if(date&&date.value)details.push(date.value);
+  if(time&&time.value)details.push(time.value);
+  if(loc&&loc.value)details.push(loc.value);
+  if(dEl)dEl.textContent=details.join(' · ')||'';
+  var activeType=document.querySelector('.event-type-chip.active');
+  if(pEl&&activeType)pEl.textContent=activeType.textContent;
+}
+
+// ===== EVENT PAGE =====
+function getEventUrl(id){return window.location.origin+window.location.pathname+'#event/'+id;}
+
+function renderEventPage(id){
+  if(countdownInterval){clearInterval(countdownInterval);countdownInterval=null;}
+  getEvent(id).then(function(ev){if(!ev){navigateTo('landing');return;}renderEventPageData(ev);});
+}
+
+function getPosterBg(posterId){
+  var p=POSTERS.find(function(x){return x.id===posterId;});
+  return p?p.bg:'';
+}
+function getFontClass(fontId){
+  var f=FONTS.find(function(x){return x.id===fontId;});
+  return f?f.cls:'font-grotesk';
+}
+
+function renderEventPageData(ev){
+  var id=ev.id;
+  var et=eventTypes.find(function(e){return e.id===ev.type;})||{emoji:'🎉',name:{ru:'Вечеринка',en:'Party',kz:'Кеш'}};
+  var bg=STYLES[ev.style]||STYLES.gradient;
+  var posterBg=getPosterBg(ev.poster||'none');
+  var fontCls=getFontClass(ev.font||'grotesk');
+  var isDarkPoster=ev.poster&&ev.poster!=='none'&&ev.poster!=='peach'&&ev.poster!=='lavender';
+
+  // Header with poster
+  var headerStyle=posterBg?'background:'+posterBg:'';
+  var headerCls=posterBg?'':'bg-gradient-to-br '+bg;
+  document.getElementById('event-header').innerHTML=
+    '<div class="'+headerCls+' p-8 md:p-12 text-white relative overflow-hidden" style="'+headerStyle+';min-height:220px">'+
+    '<div class="relative z-10">'+
+    '<div class="flex items-center gap-2 mb-3"><span class="text-3xl">'+et.emoji+'</span><span class="text-sm font-semibold uppercase tracking-wider opacity-70">'+et.name[lang]+'</span></div>'+
+    '<h1 class="'+fontCls+' text-4xl md:text-5xl font-bold mb-4 leading-tight">'+esc(ev.name)+'</h1>'+
+    '<div class="flex flex-wrap gap-5 text-sm opacity-90">'+
+    (ev.date?'<div class="flex items-center gap-2"><i data-lucide="calendar" class="w-5 h-5"></i><span class="font-medium">'+ev.date+(ev.time?' · '+ev.time:'')+'</span></div>':'')+
+    (ev.location?'<div class="flex items-center gap-2"><i data-lucide="map-pin" class="w-5 h-5"></i><span class="font-medium">'+esc(ev.location)+'</span></div>':'')+
+    '</div>'+
+    (ev.description?'<div class="mt-5 text-white/80 text-sm leading-relaxed max-w-xl">'+renderDescAsHtml(ev.description)+'</div>':'')+
+    (ev.host?'<div class="mt-4 flex items-center gap-2 text-sm opacity-70"><i data-lucide="user" class="w-4 h-4"></i><span>'+t('ev.host_label')+': '+esc(ev.host)+'</span></div>':'')+
+    '</div></div>';
+
+  // Countdown
+  renderCountdown(ev);
+
+  // Share bar + Calendar + QR
+  var url=getEventUrl(id);
+  var shareText=ev.name+' — '+url;
+  var calBtns='';
+  if(ev.date){
+    calBtns='<button onclick="addToGoogleCal()" class="share-btn flex items-center gap-2 px-3 py-2.5 rounded-xl bg-purple-50 border border-purple-100 text-sm font-semibold text-purple-700" aria-label="Google Calendar"><i data-lucide="calendar-plus" class="w-4 h-4"></i> Google</button>';
+    calBtns+='<button onclick="addToYandexCal()" class="share-btn flex items-center gap-2 px-3 py-2.5 rounded-xl bg-red-50 border border-red-100 text-sm font-semibold text-red-600" aria-label="Yandex Calendar">Я</button>';
+    calBtns+='<button onclick="downloadICS()" class="share-btn flex items-center gap-2 px-3 py-2.5 rounded-xl bg-gray-50 border border-gray-100 text-sm font-semibold text-gray-600" aria-label="Download .ics file"><i data-lucide="download" class="w-4 h-4"></i> .ics</button>';
+  }
+    var nativeShareBtn=navigator.share?'<button onclick="nativeShare(\''+esc(ev.name).replace(/'/g,"\\'")+'\',\''+url+'\')" class="share-btn flex items-center gap-2 px-4 py-2.5 rounded-xl bg-purple-50 border border-purple-100 text-sm font-semibold text-purple-700"><i data-lucide="share-2" class="w-4 h-4"></i> '+t('ev.share_native')+'</button>':'';
+  document.getElementById('event-share-bar').innerHTML=
+    '<span class="text-sm font-semibold mr-auto" data-i18n="share.badge">'+t('share.badge')+'</span>'+
+    nativeShareBtn+
+    '<a href="https://wa.me/?text='+encodeURIComponent(shareText)+'" target="_blank" class="share-btn flex items-center gap-2 px-4 py-2.5 rounded-xl bg-green-50 border border-green-100 text-sm font-semibold text-green-700"><span>💬</span> '+t('ev.share_wa')+'</a>'+
+    '<a href="https://t.me/share/url?url='+encodeURIComponent(url)+'&text='+encodeURIComponent(ev.name)+'" target="_blank" class="share-btn flex items-center gap-2 px-4 py-2.5 rounded-xl bg-blue-50 border border-blue-100 text-sm font-semibold text-blue-600"><span>✈️</span> '+t('ev.share_tg')+'</a>'+
+    '<button onclick="copyLink(\''+id+'\')" class="share-btn flex items-center gap-2 px-4 py-2.5 rounded-xl bg-gray-50 border border-gray-100 text-sm font-semibold text-gray-600"><i data-lucide="copy" class="w-4 h-4"></i> '+t('ev.share_copy')+'</button>'+
+    calBtns+
+    '<button onclick="showQrModal()" class="share-btn flex items-center gap-2 px-4 py-2.5 rounded-xl bg-gray-50 border border-gray-100 text-sm font-semibold text-gray-600"><i data-lucide="qr-code" class="w-4 h-4"></i> '+t('ev.show_qr')+'</button>'+
+    '<button onclick="copyReminder(\''+id+'\')" class="share-btn flex items-center gap-2 px-4 py-2.5 rounded-xl bg-amber-50 border border-amber-100 text-sm font-semibold text-amber-700"><i data-lucide="bell" class="w-4 h-4"></i> '+t('ev.reminder')+'</button>';
+
+  // Map
+  renderMap(ev);
+
+  // Kaspi
+  renderKaspi(ev);
+
+  renderRsvpSection(ev);
+  renderGuestList(ev);
+  renderComments(ev);
+  renderUpdates(ev);
+  lu();
+  updateOgMetaForEvent(ev);
+}
+
+// ===== COUNTDOWN =====
+function renderCountdown(ev){
+  var el=document.getElementById('event-countdown');if(!el)return;
+  if(!ev.date){el.innerHTML='';return;}
+  var dateStr=ev.date;
+  if(ev.time)dateStr+=' '+ev.time;
+  var target=new Date(dateStr).getTime();
+  if(isNaN(target)){el.innerHTML='';return;}
+  function update(){
+    var now=Date.now(),diff=target-now;
+    if(diff<=0){el.innerHTML='<div class="bg-gradient-to-r from-green-500 to-emerald-500 rounded-2xl p-5 text-center text-white"><span class="text-lg font-bold">🎉 '+t('ev.countdown_started')+'</span></div>';if(countdownInterval){clearInterval(countdownInterval);countdownInterval=null;}return;}
+    var d=Math.floor(diff/86400000),h=Math.floor((diff%86400000)/3600000),m=Math.floor((diff%3600000)/60000),s=Math.floor((diff%60000)/1000);
+    el.innerHTML='<div class="bg-gradient-to-r from-brand-500 to-pink-500 rounded-2xl p-5"><div class="countdown-box"><div class="countdown-unit"><div class="countdown-num">'+d+'</div><div class="countdown-label">'+t('ev.countdown_days')+'</div></div><div class="countdown-unit"><div class="countdown-num">'+h+'</div><div class="countdown-label">'+t('ev.countdown_hours')+'</div></div><div class="countdown-unit"><div class="countdown-num">'+m+'</div><div class="countdown-label">'+t('ev.countdown_min')+'</div></div><div class="countdown-unit"><div class="countdown-num">'+s+'</div><div class="countdown-label">'+t('ev.countdown_sec')+'</div></div></div></div>';
+  }
+  update();
+  countdownInterval=setInterval(update,1000);
+}
+
+// ===== MAP =====
+function renderMap(ev){
+  var el=document.getElementById('event-map');if(!el)return;
+  if(!ev.location){el.innerHTML='';return;}
+  var q=encodeURIComponent(ev.location+', Алматы');
+  var mapId='map-placeholder-'+Date.now();
+  el.innerHTML='<div class="bg-white rounded-2xl border-2 border-gray-100 overflow-hidden">'+
+    '<div id="'+mapId+'" class="relative cursor-pointer" style="height:250px;background:linear-gradient(135deg,#e9d5ff,#fce7f3);display:flex;align-items:center;justify-content:center" onclick="loadMapIframe(this,\''+q+'\')">'+
+    '<div class="text-center"><i data-lucide="map" class="w-10 h-10 text-brand-400 mx-auto mb-2"></i><div class="text-sm font-semibold text-brand-600">'+t('ev.map_click_load')+' 2GIS</div></div></div>'+
+    '<div class="p-4 flex items-center justify-between">'+
+    '<div class="flex items-center gap-2 text-sm text-gray-600"><i data-lucide="map-pin" class="w-4 h-4 text-brand-500"></i>'+esc(ev.location)+'</div>'+
+    '<a href="https://2gis.kz/almaty/search/'+q+'" target="_blank" class="text-sm font-semibold text-brand-600 hover:underline flex items-center gap-1" aria-label="'+t('ev.map_route')+'"><i data-lucide="navigation" class="w-4 h-4"></i>'+t('ev.map_route')+'</a>'+
+    '</div></div>';
+  lu();
+}
+function loadMapIframe(el,q){
+  el.innerHTML='<iframe width="100%" height="250" frameborder="0" style="border:0" loading="lazy" src="https://widgets.2gis.com/widget?type=firmsonmap&options=%7B%22pos%22%3A%7B%22lat%22%3A43.238949%2C%22lon%22%3A76.945669%2C%22zoom%22%3A13%7D%2C%22opt%22%3A%7B%22city%22%3A%22almaty%22%7D%2C%22org%22%3A%22'+q+'%22%7D"></iframe>';
+  el.style.cursor='default';el.onclick=null;
+}
+
+// ===== KASPI =====
+function renderKaspi(ev){
+  var el=document.getElementById('event-kaspi');if(!el)return;
+  if(!ev.kaspi){el.innerHTML='';return;}
+  var isLink=ev.kaspi.indexOf('http')===0;
+  var content='';
+  if(isLink){
+    content='<a href="'+esc(ev.kaspi)+'" target="_blank" class="btn-primary px-6 py-3 text-sm inline-flex items-center gap-2"><i data-lucide="wallet" class="w-4 h-4"></i>'+t('ev.kaspi_btn')+'</a>';
+  } else {
+    content='<div class="text-lg font-bold text-gray-800 mb-2">'+esc(ev.kaspi)+'</div><p class="text-sm text-gray-500">Kaspi Gold</p>';
+  }
+  el.innerHTML='<div class="bg-white rounded-2xl border-2 border-gray-100 p-6 text-center"><div class="flex items-center justify-center gap-2 mb-4"><span class="text-2xl">💰</span><h3 class="font-display text-lg font-bold">'+t('ev.kaspi_title')+'</h3></div>'+content+'</div>';
+}
+
+// ===== CALENDAR =====
+function icsDateLocal(date){
+  var y=date.getFullYear(),mo=String(date.getMonth()+1).padStart(2,'0'),d=String(date.getDate()).padStart(2,'0');
+  var h=String(date.getHours()).padStart(2,'0'),mi=String(date.getMinutes()).padStart(2,'0'),s=String(date.getSeconds()).padStart(2,'0');
+  return y+mo+d+'T'+h+mi+s;
+}
+function addToGoogleCal(){
+  var ev=getCachedEvent(currentEventId);if(!ev||!ev.date)return;
+  var dateStr=ev.date;if(ev.time)dateStr+=' '+ev.time;
+  var d=new Date(dateStr);if(isNaN(d.getTime()))return;
+  var end=new Date(d.getTime()+7200000);
+  var fmt=function(dt){return dt.toISOString().replace(/[-:]/g,'').replace(/\.\d{3}/,'');};
+  var inviteUrl=getEventUrl(currentEventId);
+  var details=(ev.description||'')+'\n\n'+inviteUrl;
+  var url='https://calendar.google.com/calendar/render?action=TEMPLATE&text='+encodeURIComponent(ev.name)+'&dates='+fmt(d)+'/'+fmt(end)+(ev.location?'&location='+encodeURIComponent(ev.location):'')+'&details='+encodeURIComponent(details)+'&ctz=Asia/Almaty';
+  window.open(url,'_blank');
+}
+function addToYandexCal(){
+  var ev=getCachedEvent(currentEventId);if(!ev||!ev.date)return;
+  var dateStr=ev.date;if(ev.time)dateStr+=' '+ev.time;
+  var d=new Date(dateStr);if(isNaN(d.getTime()))return;
+  var end=new Date(d.getTime()+7200000);
+  var fmt=function(dt){return dt.toISOString().replace(/[-:]/g,'').replace(/\.\d{3}/,'');};
+  var url='https://calendar.yandex.ru/new?name='+encodeURIComponent(ev.name)+'&from='+encodeURIComponent(d.toISOString())+'&to='+encodeURIComponent(end.toISOString())+(ev.location?'&where='+encodeURIComponent(ev.location):'');
+  window.open(url,'_blank');
+}
+function downloadICS(){
+  var ev=getCachedEvent(currentEventId);if(!ev||!ev.date)return;
+  var dateStr=ev.date;if(ev.time)dateStr+=' '+ev.time;
+  var d=new Date(dateStr);if(isNaN(d.getTime()))return;
+  var end=new Date(d.getTime()+7200000);
+  var inviteUrl=getEventUrl(currentEventId);
+  var desc=(ev.description||'').replace(/\n/g,'\\n')+'\\n\\n'+inviteUrl;
+  var ics=[
+    'BEGIN:VCALENDAR','VERSION:2.0','PRODID:-//POSE//Event//EN','CALSCALE:GREGORIAN','METHOD:PUBLISH',
+    'BEGIN:VTIMEZONE','TZID:Asia/Almaty',
+    'BEGIN:STANDARD','DTSTART:19700101T000000','TZOFFSETFROM:+0500','TZOFFSETTO:+0500','TZNAME:ALMT','END:STANDARD',
+    'END:VTIMEZONE',
+    'BEGIN:VEVENT',
+    'DTSTART;TZID=Asia/Almaty:'+icsDateLocal(d),
+    'DTEND;TZID=Asia/Almaty:'+icsDateLocal(end),
+    'SUMMARY:'+ev.name,
+    ev.location?'LOCATION:'+ev.location:'',
+    'DESCRIPTION:'+desc,
+    'URL:'+inviteUrl,
+    'END:VEVENT','END:VCALENDAR'
+  ].filter(Boolean).join('\r\n');
+  var blob=new Blob([ics],{type:'text/calendar;charset=utf-8'});
+  var a=document.createElement('a');a.href=URL.createObjectURL(blob);a.download=ev.name.replace(/[^a-zA-Zа-яА-Я0-9]/g,'_')+'.ics';a.click();
+}
+
+// ===== QR CODE =====
+function showQrModal(){
+  var url=getEventUrl(currentEventId);
+  var qr=qrcode(0,'M');qr.addData(url);qr.make();
+  var modal=document.createElement('div');
+  modal.className='fixed inset-0 z-[100] flex items-center justify-center bg-black/50';
+  modal.onclick=function(e){if(e.target===modal)modal.remove();};
+  modal.innerHTML='<div class="bg-white rounded-3xl p-8 max-w-sm w-full mx-4 text-center shadow-2xl"><h3 class="font-display text-xl font-bold mb-4">'+t('ev.show_qr')+'</h3><div class="flex justify-center mb-4">'+qr.createImgTag(5,10)+'</div><p class="text-sm text-gray-500 mb-4 break-all">'+url+'</p><button onclick="this.closest(\'.fixed\').remove()" class="btn-primary px-6 py-3 text-sm">OK</button></div>';
+  document.body.appendChild(modal);
+}
+
+function copyLink(id){navigator.clipboard.writeText(getEventUrl(id)).then(function(){toast(t('ev.copied'),'success');});}
+
+function esc(s){var d=document.createElement('div');d.textContent=s;return d.innerHTML;}
+
+// ===== MY RSVP (local tracking) =====
+function getMyRsvp(eventId){try{return JSON.parse(localStorage.getItem('pose_my_rsvp_'+eventId));}catch(e){return null;}}
+function setMyRsvp(eventId,rsvp){try{localStorage.setItem('pose_my_rsvp_'+eventId,JSON.stringify(rsvp));}catch(e){}}
+function clearMyRsvp(eventId){localStorage.removeItem('pose_my_rsvp_'+eventId);}
+function getMyReactions(eventId){try{return JSON.parse(localStorage.getItem('pose_my_reactions_'+eventId)||'{}');}catch(e){return {};}}
+function setMyReactions(eventId,r){try{localStorage.setItem('pose_my_reactions_'+eventId,JSON.stringify(r));}catch(e){}}
+function isOrganizer(eventId){return localStorage.getItem('pose_organizer_'+eventId)==='1';}
+function setOrganizer(eventId){localStorage.setItem('pose_organizer_'+eventId,'1');}
+
+// ===== RSVP =====
+function renderRsvpSection(ev){
+  var sec=document.getElementById('rsvp-section');
+  var myRsvp=getMyRsvp(ev.id);
+  var goingCount=(ev.rsvps||[]).filter(function(r){return r.status==='going';}).length;
+  var maybeCount=(ev.rsvps||[]).filter(function(r){return r.status==='maybe';}).length;
+  var cantCount=(ev.rsvps||[]).filter(function(r){return r.status==='cant';}).length;
+
+  var html='<div class="mb-5"><h3 class="font-display text-lg font-bold mb-1">'+t('ev.tab_rsvp')+'</h3>'+
+    '<div class="flex gap-4 text-sm text-gray-500"><span class="text-green-600 font-semibold animate-count">'+goingCount+' '+t('ev.going').replace(' \ud83d\ude4c','')+'</span><span>'+maybeCount+' '+t('ev.maybe')+'</span><span>'+cantCount+' '+t('ev.cant')+'</span></div></div>';
+
+  if(myRsvp){
+    var statusLabel={going:t('ev.going'),maybe:t('ev.maybe'),cant:t('ev.cant')};
+    html+='<div class="bg-green-50 border-2 border-green-100 rounded-2xl p-4 mb-4 flex items-center justify-between"><div><div class="text-sm font-semibold text-green-700">'+t('ev.rsvp_thanks')+'</div><div class="text-xs text-gray-500 mt-1">'+esc(myRsvp.name)+' — '+(statusLabel[myRsvp.status]||myRsvp.status)+'</div></div><button onclick="resetRsvp()" class="text-xs text-brand-600 font-semibold hover:underline">'+t('ev.rsvp_change')+'</button></div>';
+  } else {
+    var questions=ev.questions||[];
+    html+='<div class="space-y-3"><input id="rsvp-name" type="text" placeholder="'+t('ev.your_name')+'" class="w-full px-4 py-3 rounded-xl border-2 border-gray-100 text-sm mb-2">';
+    if(questions.length){
+      html+='<div class="space-y-2 mb-2">';
+      questions.forEach(function(q,i){
+        html+='<div><label class="text-xs font-medium text-gray-500 mb-1 block">'+esc(q)+'</label><input id="rsvp-q-'+i+'" type="text" class="w-full px-4 py-2.5 rounded-xl border-2 border-gray-100 text-sm"></div>';
+      });
+      html+='</div>';
+    }
+    html+='<div class="grid grid-cols-3 gap-3" role="group" aria-label="RSVP options">'+
+      '<button onclick="submitRsvp(\'going\')" class="rsvp-btn py-3 rounded-2xl text-sm font-bold bg-green-100 text-green-700 border-2 border-green-200 hover:bg-green-200" aria-label="Going">'+t('ev.going')+'</button>'+
+      '<button onclick="submitRsvp(\'maybe\')" class="rsvp-btn py-3 rounded-2xl text-sm font-bold bg-yellow-50 text-yellow-700 border-2 border-yellow-200 hover:bg-yellow-100" aria-label="Maybe">'+t('ev.maybe')+'</button>'+
+      '<button onclick="submitRsvp(\'cant\')" class="rsvp-btn py-3 rounded-2xl text-sm font-bold bg-gray-100 text-gray-700 border-2 border-gray-200 hover:bg-gray-200" aria-label="Cannot attend">'+t('ev.cant')+'</button>'+
+      '</div></div>';
+  }
+  sec.innerHTML=html;
+}
+
+function submitRsvp(status){
+  var name=document.getElementById('rsvp-name').value.trim();
+  if(!name){toast(t('ev.your_name'),'error');document.getElementById('rsvp-name').focus();return;}
+  var answers={};
+  var ev=getCachedEvent(currentEventId);
+  if(ev&&ev.questions){
+    ev.questions.forEach(function(q,i){
+      var inp=document.getElementById('rsvp-q-'+i);
+      if(inp&&inp.value.trim())answers[q]=inp.value.trim();
+    });
+  }
+  api('POST','/api/events/'+currentEventId+'/rsvps',{name:name,status:status,answers:answers}).then(function(res){
+    setMyRsvp(currentEventId,{id:res.id,name:name,status:status});
+    confetti();toast(t('ev.rsvp_thanks'),'success');
+    renderEventPage(currentEventId);
+  }).catch(function(){toast('Error','error');});
+}
+
+function resetRsvp(){
+  var myRsvp=getMyRsvp(currentEventId);
+  if(myRsvp&&myRsvp.id){
+    api('DELETE','/api/rsvps/'+myRsvp.id).then(function(){
+      clearMyRsvp(currentEventId);renderEventPage(currentEventId);
+    }).catch(function(){toast('Error','error');});
+  } else {clearMyRsvp(currentEventId);renderEventPage(currentEventId);}
+}
+
+// ===== GUEST LIST =====
+function renderGuestList(ev){
+  var sec=document.getElementById('guest-list-section');
+  var rsvps=ev.rsvps||[];
+  var isOrg=isOrganizer(ev.id);
+  var csvBtn=isOrg&&rsvps.length?'<button onclick="exportGuestsCSV()" class="text-xs font-semibold text-brand-600 hover:underline flex items-center gap-1" aria-label="'+t('ev.export_csv')+'"><i data-lucide="download" class="w-3.5 h-3.5"></i>'+t('ev.export_csv')+'</button>':'';
+  var html='<div class="flex items-center justify-between mb-4"><h3 class="font-display text-lg font-bold">'+t('ev.guest_list')+' ('+rsvps.length+')</h3>'+csvBtn+'</div>';
+  if(!rsvps.length){html+='<p class="text-gray-500 text-sm">'+t('ev.no_guests')+'</p>';}
+  else{
+    var groups={going:[],maybe:[],cant:[]};
+    rsvps.forEach(function(r){(groups[r.status]||groups.going).push(r);});
+    ['going','maybe','cant'].forEach(function(s){
+      if(!groups[s].length)return;
+      var label={going:t('ev.going'),maybe:t('ev.maybe'),cant:t('ev.cant')};
+      var color={going:'green',maybe:'yellow',cant:'gray'};
+      html+='<div class="mb-4"><div class="text-xs font-semibold uppercase tracking-wider text-'+color[s]+'-600 mb-2">'+label[s]+' ('+groups[s].length+')</div><div class="flex flex-wrap gap-2">';
+      groups[s].forEach(function(r){
+        var ansHtml='';
+        if(r.answers&&typeof r.answers==='object'){
+          var keys=Object.keys(r.answers);
+          if(keys.length){ansHtml='<div class="mt-1">';keys.forEach(function(k){ansHtml+='<div class="text-[10px] text-gray-500"><b>'+esc(k)+':</b> '+esc(r.answers[k])+'</div>';});ansHtml+='</div>';}
+        }
+        html+='<div class="flex items-center gap-2 px-3 py-2 rounded-xl bg-'+color[s]+'-50 border border-'+color[s]+'-100 animate-slide-in">'+avatarHtml(r.name,6,'9px')+'<div><span class="text-sm font-medium">'+esc(r.name)+'</span>'+ansHtml+'</div></div>';
+      });
+      html+='</div></div>';
+    });
+  }
+  sec.innerHTML=html;
+}
+
+// ===== COMMENTS =====
+function renderComments(ev){
+  var sec=document.getElementById('comments-section');
+  var comments=ev.comments||[];
+  var myReactions=getMyReactions(ev.id);
+  var html='<h3 class="font-display text-lg font-bold mb-4">'+t('ev.tab_comments')+' ('+comments.length+')</h3>';
+
+  html+='<div class="flex gap-3 mb-6"><div class="flex-1 space-y-2"><input id="comment-name" type="text" placeholder="'+t('ev.comment_name')+'" class="w-full px-4 py-2.5 rounded-xl border-2 border-gray-100 text-sm"><div class="flex gap-2"><input id="comment-text" type="text" placeholder="'+t('ev.comment_ph')+'" class="flex-1 px-4 py-2.5 rounded-xl border-2 border-gray-100 text-sm" onkeydown="if(event.key===\'Enter\')addComment()"><button onclick="addComment()" class="btn-primary px-5 py-2.5 text-sm">'+t('ev.comment_send')+'</button></div></div></div>';
+
+  if(!comments.length){html+='<p class="text-gray-500 text-sm text-center py-6">'+t('ev.no_comments')+'</p>';}
+  else{
+    html+='<div class="space-y-4">';
+    comments.forEach(function(c){
+      var cMyR=myReactions[c.id]||[];
+      html+='<div class="comment-item flex gap-3 p-4 bg-gray-50 rounded-2xl">'+avatarHtml(c.name,9,'12px')+'<div class="flex-1 min-w-0"><div class="flex items-center gap-2 mb-1"><span class="text-sm font-semibold">'+esc(c.name)+'</span><span class="text-xs text-gray-300">'+timeAgo(c.created_at)+'</span></div><p class="text-sm text-gray-600">'+esc(c.text)+'</p>'+
+        '<div class="flex gap-1 mt-2">'+REACTIONS.map(function(r){var cnt=(c.reactions&&c.reactions[r])||0;var reacted=cMyR.indexOf(r)>-1;return '<button onclick="toggleReaction(&quot;'+c.id+'&quot;,&quot;'+r+'&quot;)" class="reaction-btn px-2 py-1 rounded-lg text-xs border '+(reacted?'border-brand-200 bg-brand-50':'border-gray-100 bg-white')+'">'+r+(cnt?' <span class="font-semibold">'+cnt+'</span>':'')+'</button>';}).join('')+
+        '</div></div></div>';
+    });
+    html+='</div>';
+  }
+  sec.innerHTML=html;
+}
+
+function addComment(){
+  var name=document.getElementById('comment-name').value.trim();
+  var text=document.getElementById('comment-text').value.trim();
+  if(!name||!text)return;
+  api('POST','/api/events/'+currentEventId+'/comments',{name:name,text:text}).then(function(){
+    document.getElementById('comment-text').value='';
+    toast('\ud83d\udcac','success');
+    renderEventPage(currentEventId);
+  }).catch(function(){toast('Error','error');});
+}
+
+function toggleReaction(commentId,emoji){
+  var myReactions=getMyReactions(currentEventId);
+  if(!myReactions[commentId])myReactions[commentId]=[];
+  var idx=myReactions[commentId].indexOf(emoji);
+  if(idx>-1)myReactions[commentId].splice(idx,1);
+  else myReactions[commentId].push(emoji);
+  setMyReactions(currentEventId,myReactions);
+  api('POST','/api/comments/'+commentId+'/reactions',{emoji:emoji}).then(function(){
+    renderEventPage(currentEventId);
+  }).catch(function(){toast('Error','error');});
+}
+
+// ===== UPDATES (BLAST) =====
+function renderUpdates(ev){
+  var sec=document.getElementById('updates-section');
+  var updates=ev.updates||[];
+  var orgFlag=isOrganizer(ev.id);
+  var html='<h3 class="font-display text-lg font-bold mb-4">'+t('ev.tab_updates')+' ('+updates.length+')</h3>';
+
+  if(orgFlag){
+    html+='<div class="flex gap-2 mb-6"><textarea id="update-text" rows="2" placeholder="'+t('ev.update_ph')+'" class="flex-1 px-4 py-3 rounded-xl border-2 border-gray-100 text-sm resize-none"></textarea><button onclick="sendUpdate()" class="btn-primary px-5 py-3 text-sm self-end whitespace-nowrap flex items-center gap-2"><i data-lucide="send" class="w-4 h-4"></i> '+t('ev.update_send')+'</button></div>';
+  }
+
+  if(!updates.length){html+='<p class="text-gray-500 text-sm text-center py-6">'+t('ev.no_updates')+'</p>';}
+  else{
+    html+='<div class="space-y-3">';
+    updates.forEach(function(u){
+      html+='<div class="update-item bg-brand-50 rounded-2xl p-4 pl-6"><div class="flex items-center gap-2 mb-1"><span class="text-xs font-semibold text-brand-600">'+t('ev.organizer')+'</span><span class="text-xs text-gray-300">'+timeAgo(u.created_at)+'</span></div><p class="text-sm text-gray-700">'+esc(u.text)+'</p></div>';
+    });
+    html+='</div>';
+  }
+  sec.innerHTML=html;lu();
+}
+
+function sendUpdate(){
+  var text=document.getElementById('update-text').value.trim();
+  if(!text)return;
+  api('POST','/api/events/'+currentEventId+'/updates',{text:text}).then(function(){
+    document.getElementById('update-text').value='';
+    toast('\ud83d\udce3 '+t('ev.update_send'),'success');
+    renderEventPage(currentEventId);
+  }).catch(function(){toast('Error','error');});
+}
+
+function timeAgo(iso){
+  var diff=Date.now()-new Date(iso).getTime();
+  var m=Math.floor(diff/60000);
+  if(m<1)return lang==='en'?'just now':'\u0442\u043e\u043b\u044c\u043a\u043e \u0447\u0442\u043e';
+  if(m<60)return m+(lang==='en'?'m':'\u043c');
+  var h=Math.floor(m/60);if(h<24)return h+(lang==='en'?'h':'\u0447');
+  var d=Math.floor(h/24);return d+(lang==='en'?'d':'\u0434');
+}
+
+// ===== TABS =====
+function setupTabs(){
+  document.querySelectorAll('.tab-btn').forEach(function(btn){
+    btn.addEventListener('click',function(){
+      document.querySelectorAll('.tab-btn').forEach(function(b){b.classList.remove('active');b.classList.add('text-gray-500');b.setAttribute('aria-selected','false');});
+      this.classList.add('active');this.classList.remove('text-gray-500');this.setAttribute('aria-selected','true');
+      document.querySelectorAll('.tab-content').forEach(function(c){c.style.display='none';});
+      document.getElementById('tab-'+this.dataset.tab).style.display='';
+    });
+    btn.addEventListener('keydown',function(e){
+      var tabs=Array.from(document.querySelectorAll('.tab-btn'));
+      var idx=tabs.indexOf(this);
+      if(e.key==='ArrowRight'&&idx<tabs.length-1){e.preventDefault();tabs[idx+1].focus();tabs[idx+1].click();}
+      if(e.key==='ArrowLeft'&&idx>0){e.preventDefault();tabs[idx-1].focus();tabs[idx-1].click();}
+    });
+  });
+}
+
+// ===== UTILS =====
+function lu(){lucide.createIcons();}
+var revealObs=new IntersectionObserver(function(entries){entries.forEach(function(e){if(e.isIntersecting){e.target.classList.add('visible');revealObs.unobserve(e.target);}});},{threshold:.1,rootMargin:'0px 0px -40px 0px'});
+function observeReveals(){document.querySelectorAll('.reveal:not(.visible)').forEach(function(el){revealObs.observe(el);});}
+function renderAll(){renderEventTypes();renderTemplates();renderFeatures();renderCreateTypes();renderPosterPicker();renderFontPicker();renderQuestionsList();updatePlaceholders();if(currentView==='event'&&currentEventId)renderEventPage(currentEventId);}
+
+// ===== CSV EXPORT =====
+function exportGuestsCSV(){
+  var ev=getCachedEvent(currentEventId);if(!ev)return;
+  var rsvps=ev.rsvps||[];if(!rsvps.length){toast('No guests to export','info');return;}
+  var qHeaders=ev.questions||[];
+  var header=['Name','Status','Timestamp'];
+  qHeaders.forEach(function(q){header.push(q);});
+  var rows=[header.join(',')];
+  rsvps.forEach(function(r){
+    var row=['"'+esc(r.name)+'"',r.status,r.created_at||''];
+    qHeaders.forEach(function(q){
+      var ans=(r.answers&&r.answers[q])||'';
+      row.push('"'+ans.replace(/"/g,'""')+'"');
+    });
+    rows.push(row.join(','));
+  });
+  var bom='\uFEFF';
+  var blob=new Blob([bom+rows.join('\n')],{type:'text/csv;charset=utf-8'});
+  var a=document.createElement('a');a.href=URL.createObjectURL(blob);a.download='guests_'+currentEventId+'.csv';a.click();
+}
+
+// ===== RICH TEXT TOOLBAR =====
+function insertMdFormat(tag){
+  var el=document.getElementById('ev-desc');if(!el)return;
+  var start=el.selectionStart,end=el.selectionEnd,text=el.value;
+  var selected=text.substring(start,end);
+  var wrap='';
+  if(tag==='bold')wrap='**'+selected+'**';
+  else if(tag==='italic')wrap='*'+selected+'*';
+  else if(tag==='list')wrap='\n• '+selected;
+  else wrap=selected+tag;
+  el.value=text.substring(0,start)+wrap+text.substring(end);
+  el.focus();
+  el.selectionStart=el.selectionEnd=start+wrap.length;
+}
+function renderDescAsHtml(md){
+  if(!md)return '';
+  var html=esc(md);
+  html=html.replace(/\*\*(.+?)\*\*/g,'<strong>$1</strong>');
+  html=html.replace(/\*(.+?)\*/g,'<em>$1</em>');
+  html=html.replace(/^• (.+)$/gm,'<li>$1</li>');
+  html=html.replace(/(<li>.*<\/li>)/s,'<ul class="list-disc pl-5">$1</ul>');
+  html=html.replace(/\n/g,'<br>');
+  return html;
+}
+
+// ===== INIT =====
+document.addEventListener('DOMContentLoaded',function(){
+  lu();renderAll();observeReveals();setupTabs();
+
+  // Router
+  function checkHash(){
+    var h=window.location.hash;
+    if(h.indexOf('#event/')===0){var id=h.replace('#event/','');navigateTo('event',id);}
+  }
+  window.addEventListener('hashchange',checkHash);
+  checkHash();
+
+  // Navbar scroll
+  window.addEventListener('scroll',function(){var nb=document.getElementById('navbar');if(window.scrollY>60)nb.classList.add('bg-white/90','backdrop-blur-xl','shadow-sm','border-b','border-gray-100');else nb.classList.remove('bg-white/90','backdrop-blur-xl','shadow-sm','border-b','border-gray-100');});
+
+  // Mobile menu
+  document.getElementById('mobile-menu-btn').addEventListener('click',openMobile);
+  document.getElementById('mobile-menu-close').addEventListener('click',closeMobile);
+  document.getElementById('mobile-menu-backdrop').addEventListener('click',closeMobile);
+
+  // Style picks
+  document.querySelectorAll('.style-pick').forEach(function(el){el.addEventListener('click',function(){document.querySelectorAll('.style-pick').forEach(function(s){s.classList.remove('active');s.style.borderColor='transparent';});this.classList.add('active');this.style.borderColor='#a855f7';selectedStyle=this.dataset.style;updateLivePreview();});});
+
+  // Live preview listeners
+  ['ev-name','ev-date','ev-time','ev-location'].forEach(function(id){var el=document.getElementById(id);if(el)el.addEventListener('input',updateLivePreview);});
+
+  // CREATE EVENT
+  document.getElementById('create-btn').addEventListener('click',function(){
+    var name=document.getElementById('ev-name').value.trim();
+    if(!name){toast(t('create.name'),'error');document.getElementById('ev-name').focus();return;}
+    var kaspiEl=document.getElementById('ev-kaspi');
+    var body={
+      type:selectedEventType||'party',name:name,
+      date:document.getElementById('ev-date').value,
+      time:document.getElementById('ev-time').value,
+      location:document.getElementById('ev-location').value.trim(),
+      description:document.getElementById('ev-desc').value.trim(),
+      host:document.getElementById('ev-host').value.trim(),
+      style:selectedStyle,
+      poster:selectedPoster||'none',
+      font:selectedFont||'grotesk',
+      kaspi:kaspiEl?kaspiEl.value.trim():'',
+      questions:guestQuestions.slice()
+    };
+    api('POST','/api/events',body).then(function(res){
+      setOrganizer(res.id);
+      guestQuestions=[];
+      selectedPoster='none';selectedFont='grotesk';
+      confetti();
+      setTimeout(function(){navigateTo('event',res.id);},500);
+    }).catch(function(){toast('Error creating event','error');});
+  });
+
+  // Escape
+  document.addEventListener('keydown',function(e){if(e.key==='Escape')closeMobile();});
+
+  // ===== PWA SERVICE WORKER =====
+  if('serviceWorker' in navigator&&!isInAppBrowser()){
+    navigator.serviceWorker.register('/sw.js').then(function(reg){
+      reg.addEventListener('updatefound',function(){
+        var w=reg.installing;
+        w.addEventListener('statechange',function(){
+          if(w.state==='installed'&&navigator.serviceWorker.controller){
+            toast('Обновление доступно — обновите страницу','info');
+          }
+        });
+      });
+    }).catch(function(){});
+  }
+
+  // ===== PWA INSTALL PROMPT =====
+  window._deferredPrompt=null;
+  window.addEventListener('beforeinstallprompt',function(e){
+    e.preventDefault();window._deferredPrompt=e;
+    var visits=parseInt(localStorage.getItem('pose_visits')||'0')+1;
+    localStorage.setItem('pose_visits',String(visits));
+    if(localStorage.getItem('pose_pwa_dismissed'))return;
+    if(visits>=2)showPwaInstallBanner();
+    else setTimeout(function(){if(!localStorage.getItem('pose_pwa_dismissed'))showPwaInstallBanner();},30000);
+  });
+
+  // ===== WEBVIEW DETECTION + BANNER =====
+  if(isInAppBrowser()&&!localStorage.getItem('pose_webview_dismissed')){
+    showWebviewBanner();
+  }
+
+  // ===== OG META TAGS =====
+  updateOgMeta();
+});
+
+// ===== WEBVIEW HELPERS =====
+function isInAppBrowser(){
+  var ua=navigator.userAgent||'';
+  return /TelegramBot|WhatsApp|Instagram|FB_IAB|FBAN|FBAV|Line\/|Snapchat|Twitter/i.test(ua);
+}
+
+function showWebviewBanner(){
+  var el=document.createElement('div');
+  el.className='webview-banner';
+  el.id='webview-banner';
+  var isIOS=/iPhone|iPad|iPod/i.test(navigator.userAgent);
+  var browserName=isIOS?'Safari':'Chrome';
+  el.innerHTML='<span>'+t('ev.webview_open')+' <a href="'+window.location.href+'" target="_blank">'+browserName+'</a></span><button onclick="dismissWebviewBanner()" aria-label="Close">&times;</button>';
+  document.body.prepend(el);
+  document.body.style.paddingTop='48px';
+}
+function dismissWebviewBanner(){
+  var b=document.getElementById('webview-banner');if(b)b.remove();
+  document.body.style.paddingTop='';
+  localStorage.setItem('pose_webview_dismissed','1');
+}
+
+// ===== PWA INSTALL BANNER =====
+function showPwaInstallBanner(){
+  if(window.matchMedia('(display-mode:standalone)').matches)return;
+  if(document.getElementById('pwa-install-banner'))return;
+  var el=document.createElement('div');
+  el.className='pwa-install-banner';
+  el.id='pwa-install-banner';
+  el.innerHTML='<img src="icon-192.png" alt="POSE"><div class="pwa-info"><h4>POSE</h4><p>'+t('ev.pwa_desc')+'</p></div><button class="pwa-btn" onclick="installPwa()">'+t('ev.pwa_install')+'</button><button class="pwa-close" onclick="dismissPwa()" aria-label="Close">&times;</button>';
+  document.body.appendChild(el);
+}
+function installPwa(){
+  if(!window._deferredPrompt)return;
+  var p=window._deferredPrompt;
+  p.prompt();
+  p.userChoice.then(function(){dismissPwa();});
+}
+function dismissPwa(){
+  var b=document.getElementById('pwa-install-banner');if(b)b.remove();
+  localStorage.setItem('pose_pwa_dismissed','1');
+}
+
+// ===== WEB SHARE API =====
+function nativeShare(title,url){
+  if(navigator.share){
+    navigator.share({title:title,url:url}).catch(function(){});
+  }else{
+    navigator.clipboard.writeText(url).then(function(){toast(t('ev.copied'),'success');});
+  }
+}
+
+// ===== PUSH FALLBACK: COPY REMINDER =====
+function copyReminder(eventId){
+  var ev=getCachedEvent(eventId);if(!ev)return;
+  var dateStr=ev.date||'';
+  var timeStr=ev.time||'';
+  var url=getEventUrl(eventId);
+  var text='🔔 '+ev.name+'\n📅 '+dateStr+(timeStr?' '+timeStr:'')+'\n📍 '+(ev.location||'')+'\n🔗 '+url;
+  navigator.clipboard.writeText(text).then(function(){toast(t('ev.reminder_copied'),'success');}).catch(function(){
+    var ta=document.createElement('textarea');ta.value=text;ta.style.position='fixed';ta.style.opacity='0';document.body.appendChild(ta);ta.select();document.execCommand('copy');ta.remove();toast(t('ev.reminder_copied'),'success');
+  });
+}
+
+// ===== DYNAMIC OG META TAGS =====
+function updateOgMeta(){
+  var hash=window.location.hash;
+  if(!hash||hash.indexOf('#event/')!==0)return;
+  var eventId=hash.replace('#event/','');
+  getEvent(eventId).then(function(ev){if(ev)updateOgMetaForEvent(ev);});
+}
+function updateOgMetaForEvent(ev){
+  var url=getEventUrl(ev.id);
+  var title=ev.name+' — '+(ev.host||'POSE');
+  var desc=(ev.date||'')+(ev.time?' • '+ev.time:'')+(ev.location?' • '+ev.location:'')+' • RSVP';
+  setMeta('og:title',title);
+  setMeta('og:description',desc);
+  setMeta('og:url',url);
+  setMeta('twitter:title',title);
+  setMeta('twitter:description',desc);
+  document.title=title+' | POSE';
+}
+function setMeta(prop,val){
+  var sel=prop.indexOf('og:')===0?'meta[property="'+prop+'"]':'meta[name="'+prop+'"]';
+  var el=document.querySelector(sel);
+  if(el)el.setAttribute('content',val);
+}
+</script>
+</body>
+</html>

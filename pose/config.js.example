@@ -1,0 +1,11 @@
+// ── Free cloud (no server to deploy) ─────────────────────
+// 1. Create a free project at https://supabase.com
+// 2. Run supabase/schema.sql in SQL Editor
+// 3. Project Settings → API → copy URL and anon public key
+// 4. Rename this file to config.js and fill in:
+
+// var POSE_SUPABASE_URL = 'https://xhanbaktufcrbluygujr.supabase.co';
+// var POSE_SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InhoYW5iYWt0dWZjcmJsdXlndWpyIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODAzMTE2NTEsImV4cCI6MjA5NTg4NzY1MX0.I1oyJCdn-KfH1hT7KeSWzx-hdr3kgRFXcndYfN1OMNQ';
+
+// ── Or self-hosted / Render API ─────────────────────────
+// var POSE_API_BASE = 'https://your-api.onrender.com';

@@ -1,0 +1,13 @@
+services:
+  - type: web
+    name: pose
+    runtime: docker
+    plan: free
+    healthCheckPath: /api/health
+    disk:
+      name: pose-data
+      mountPath: /data
+      sizeGB: 1
+    envVars:
+      - key: DB_PATH
+        value: /data/pose.db
