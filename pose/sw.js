@@ -1,6 +1,8 @@
-var CACHE_NAME='pose-v1';
+// Bumped to v2: relative asset paths so the SW works under a sub-path
+// deployment (e.g. GitHub Pages at /pose/) as well as at a domain root.
+var CACHE_NAME='pose-v2';
 var STATIC_ASSETS=[
-  '/','/index.html','/manifest.json','/icon-192.png','/icon-512.png'
+  './','./index.html','./manifest.json','./icon-192.png','./icon-512.png','./config.js','./backend.js'
 ];
 var FONT_CACHE='pose-fonts-v1';
 
@@ -59,7 +61,7 @@ self.addEventListener('fetch',function(e){
         }
         return r;
       }).catch(function(){
-        return caches.match(e.request)||caches.match('/');
+        return caches.match(e.request).then(function(r){return r||caches.match('./index.html');});
       })
     );
     return;
